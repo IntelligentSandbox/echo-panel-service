@@ -1,0 +1,42 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #121212;
+    font-family:
+        Inter, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+        Sans-Serif;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid #373737;
+    flex-shrink: 0;
+}
+
+.panel-title {
+    color: white;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+}
+
+.ai-status-dot {
+    background-color: #00ff00;
+    border-radius: 50%;
+    width: 8px;
+    height: 8px;
+}
+
+.ai-state {
+    color: #9a9a9a;
+    font-weight: normal;
+}
