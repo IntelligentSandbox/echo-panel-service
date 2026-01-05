@@ -1,3 +1,11 @@
+:root {
+    --primary: #d3d3d3;
+    --bg-tab-active: #2a2a2a;
+    --border-main: #444444;
+    --text-muted: #999999;
+    --bg-item-muted: #363636;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -16,7 +24,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 10px 14px;
-    border-bottom: 1px solid #373737;
+    border-bottom: 1px solid var(--border-main);
     flex-shrink: 0;
 }
 
@@ -37,6 +45,34 @@ body {
 }
 
 .ai-state {
-    color: #9a9a9a;
+    color: var(--text-muted);
     font-weight: normal;
+}
+
+.panel-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-main);
+    flex-shrink: 0;
+    background-color: var(--bg-tab-active);
+}
+
+.panel-tab {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 11px;
+    border-bottom: 2px solid transparent;
+    background: none;
+    color: var(--text-muted);
+}
+
+.panel-tab.active {
+    border-bottom-color: var(--primary);
+    color: var(--primary);
+}
+
+.panel-tab:hover {
+    background: var(--bg-item-muted);
+    color: var(--primary);
 }
