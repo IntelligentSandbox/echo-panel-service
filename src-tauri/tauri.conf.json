@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "panel-service",
+  "productName": "AI VTuber Panel",
   "version": "0.1.0",
   "identifier": "com.ramonasuncion.ai-panel",
   "build": {
@@ -10,9 +10,13 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "panel-service",
-        "width": 800,
-        "height": 600
+        "title": "AI VTuber Panel",
+        "width": 340,
+        "height": 520,
+        "resizable": true,
+        "alwaysOnTop": true,
+        "decorations": true,
+        "transparent": false
       }
     ],
     "security": {
