@@ -8,21 +8,70 @@
         <script type="module" src="/assets/js/main.js" defer></script>
     </head>
     <body>
-        <div class="panel-header">
-            <div class="panel-title">
-                <span id="ai-status-dot" class="ai-status-dot"></span>
-                <span>AI VTuber</span>
-                <span id="ai-state" class="ai-state">idle</span>
+        <div id="control-panel">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <span id="ai-status-dot" class="ai-status-dot"></span>
+                    <span>AI VTuber</span>
+                    <span id="ai-state" class="ai-state">idle</span>
+                </div>
+            </div>
+
+            <div class="panel-tabs">
+                <button id="panel-button" class="panel-tab active">Chat</button>
+                <button id="panel-button" class="panel-tab">Controls</button>
+                <button id="panel-button" class="panel-tab">
+                    Integrations
+                </button>
+                <button id="panel-button" class="panel-tab">Memory</button>
+                <button id="panel-button" class="panel-tab">Logs</button>
+            </div>
+
+            <div id="chat-container" class="panel-tab-content active">
+                <div id="chat-messages">
+                    <div class="chat-message reminder">
+                        <p>Click on the microphone or type a message.</p>
+                    </div>
+                </div>
+                <!-- Chat messages added in between -->
+                <!-- https://www.svgrepo.com/ -->
+                <div id="chat-input-container">
+                    <button id="continuous-chat-button" class="chat-button">
+                        <svg
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M13 4h-2v16h2V4zm4 4h-2v8h2V8zm4 3h-2v2h2v-2zM9 8H7v8h2V8zM5 11H3v2h2v-2z"
+                            />
+                        </svg>
+                    </button>
+                    <button id="microphone-chat-button" class="chat-button">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"
+                            />
+                        </svg>
+                    </button>
+                    <input
+                        id="chat-input"
+                        type="text"
+                        placeholder="Type a message..."
+                    />
+                    <button id="send-chat-button" class="chat-button">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                        </svg>
+                    </button>
+                    <button id="stop-chat-button" class="chat-button">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="7" y="7" width="10" height="10" rx="1" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
-
-        <div class="panel-tabs">
-            <button id="panel-button" class="panel-tab active">Chat</button>
-            <button id="panel-button" class="panel-tab">Controls</button>
-            <button id="panel-button" class="panel-tab">Integrations</button>
-            <button id="panel-button" class="panel-tab">Memory</button>
-            <button id="panel-button" class="panel-tab">Logs</button>
-        </div>
     </body>
+
     <script type="module" src="/assets/js/ui.js" defer></script>
 </html>

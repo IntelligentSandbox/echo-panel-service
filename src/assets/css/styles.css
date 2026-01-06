@@ -19,6 +19,12 @@ body {
         Sans-Serif;
 }
 
+#control-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
 .panel-header {
     display: flex;
     justify-content: space-between;
@@ -54,6 +60,7 @@ body {
     border-bottom: 1px solid var(--border-main);
     flex-shrink: 0;
     background-color: var(--bg-tab-active);
+    transition: all 0.2s;
 }
 
 .panel-tab {
@@ -75,4 +82,91 @@ body {
 .panel-tab:hover {
     background: var(--bg-item-muted);
     color: var(--primary);
+}
+
+.chat-message.reminder {
+    color: var(--text-muted);
+    text-align: center;
+    font-size: 11px;
+    font-style: italic;
+    max-width: 100%;
+    background-color: var(--bg-item-muted);
+}
+
+#chat-messages {
+    flex: 1;
+    padding: 8px;
+    overflow-y: auto;
+    min-width: 150px;
+    max-height: none;
+}
+
+.chat-message {
+    margin: 8px 0;
+    border-radius: 8px;
+    word-wrap: break-word;
+    padding: 8px;
+    max-width: 80%;
+}
+
+.chat-button {
+    border: none;
+    cursor: pointer;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+}
+
+.chat-button svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--primary);
+    transition: fill 0.2s ease;
+}
+
+.chat-button:hover,
+.chat-button.active {
+    background-color: var(--bg-item-muted);
+}
+
+.chat-button:active {
+    transform: scale(0.88);
+}
+
+.panel-tab-content {
+    display: none;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 200px;
+    max-height: 500px;
+}
+
+.panel-tab-content.active {
+    display: flex;
+    flex-direction: column;
+}
+
+#chat-input-container {
+    display: flex;
+    gap: 8px;
+    padding: 10px;
+    border-top: 1px solid var(--border-main);
+    background-color: var(--bg-tab-active);
+}
+
+#chat-input {
+    background: var(--border-main);
+    color: var(--text-muted);
+    font-size: 12px;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 14px;
+    flex: 1;
+    outline: none;
+    min-width: 0;
+    color: white;
 }
