@@ -185,3 +185,29 @@ body {
 #stop-chat-button {
     display: none;
 }
+
+.status-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.status-item {
+    padding: 10px;
+    border-radius: 8px;
+    background-color: var(--bg-item-muted);
+}
+
+.status-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.status-value {
+    font-size: 14px;
+    color: white;
+    font-weight: 500;
+}
