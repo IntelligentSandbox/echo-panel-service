@@ -1,9 +1,10 @@
 :root {
     --primary: #d3d3d3;
-    --bg-tab-active: #2a2a2a;
+    --bg-tab-active: #212121ff;
     --border-main: #444444;
     --text-muted: #999999;
     --bg-item-muted: #363636;
+    --bg-header: #272727ff;
 }
 
 * {
@@ -23,6 +24,7 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    font-size: 12px;
 }
 
 .panel-header {
@@ -31,12 +33,13 @@ body {
     align-items: center;
     padding: 10px 14px;
     border-bottom: 1px solid var(--border-main);
+    background-color: var(--bg-header);
     flex-shrink: 0;
 }
 
 .panel-title {
     color: white;
-    font-size: 12px;
+    font-size: 14px;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -169,4 +172,8 @@ body {
     outline: none;
     min-width: 0;
     color: white;
+}
+
+.status-section {
+    padding: 10px;
 }
