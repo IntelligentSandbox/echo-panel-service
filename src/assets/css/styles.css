@@ -177,3 +177,11 @@ body {
 .status-section {
     padding: 10px;
 }
+
+#continuous-chat-button {
+    display: none;
+}
+
+#stop-chat-button {
+    display: none;
+}
