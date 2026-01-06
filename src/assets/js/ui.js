@@ -1,11 +1,21 @@
 export class PanelUI {
-    constructor() {}
+    constructor() {
+        this.currentTab = 'chat'
+    }
 
     switchTab(tab) {
+        document
+            .querySelectorAll('.panel-tab-content')
+            .forEach((tabContent) => {
+                tabContent.classList.remove('active')
+            })
         document.querySelectorAll('.panel-tab').forEach((tab) => {
             tab.classList.remove('active')
         })
-        tab.classList.add('active')
-        console.log('Switching to tab', tab.innerText)
+
+        document.querySelector(`#panel-${tab}`).classList.add('active')
+        document.querySelector(`#${tab}-container`).classList.add('active')
+
+        this.currentTab = tab
     }
 }
