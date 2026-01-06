@@ -12,19 +12,19 @@
             <div class="panel-header">
                 <div class="panel-title">
                     <span id="ai-status-dot" class="ai-status-dot"></span>
-                    <span>AI VTuber</span>
+                    <span>Echo</span>
                     <span id="ai-state" class="ai-state">idle</span>
                 </div>
             </div>
 
             <div class="panel-tabs">
-                <button id="panel-button" class="panel-tab active">Chat</button>
-                <button id="panel-button" class="panel-tab">Controls</button>
-                <button id="panel-button" class="panel-tab">
+                <button id="panel-chat" class="panel-tab active">Chat</button>
+                <button id="panel-controls" class="panel-tab">Controls</button>
+                <button id="panel-integrations" class="panel-tab">
                     Integrations
                 </button>
-                <button id="panel-button" class="panel-tab">Memory</button>
-                <button id="panel-button" class="panel-tab">Logs</button>
+                <button id="panel-memory" class="panel-tab">Memory</button>
+                <button id="panel-logs" class="panel-tab">Logs</button>
             </div>
 
             <div id="chat-container" class="panel-tab-content active">
@@ -33,10 +33,8 @@
                         <p>Click on the microphone or type a message.</p>
                     </div>
                 </div>
-                <!-- Chat messages added in between -->
-                <!-- https://www.svgrepo.com/ -->
                 <div id="chat-input-container">
-                    <button id="continuous-chat-button" class="chat-button">
+                    <!-- <button id="continuous-chat-button" class="chat-button">
                         <svg
                             viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg"
@@ -45,7 +43,7 @@
                                 d="M13 4h-2v16h2V4zm4 4h-2v8h2V8zm4 3h-2v2h2v-2zM9 8H7v8h2V8zM5 11H3v2h2v-2z"
                             />
                         </svg>
-                    </button>
+                    </button> -->
                     <button id="microphone-chat-button" class="chat-button">
                         <svg viewBox="0 0 24 24">
                             <path
@@ -63,11 +61,25 @@
                             <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
                         </svg>
                     </button>
-                    <button id="stop-chat-button" class="chat-button">
+                    <!-- <button id="stop-chat-button" class="chat-button">
                         <svg viewBox="0 0 24 24">
                             <rect x="7" y="7" width="10" height="10" rx="1" />
                         </svg>
-                    </button>
+                    </button> -->
+                </div>
+            </div>
+            <div id="ai-controller-container" class="panel-tab-content">
+                <div class="status-section">
+                    <div class="status-grid">
+                        <div class="status-item">
+                            <div class="status-item-title">
+                                <span>Status</span>
+                            </div>
+                            <div class="status-item-value">
+                                <span id="ai-status">idle</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
