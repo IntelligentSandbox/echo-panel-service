@@ -11,7 +11,7 @@
     "windows": [
       {
         "title": "AI VTuber Panel",
-        "width": 340,
+        "width": 350,
         "height": 520,
         "resizable": true,
         "alwaysOnTop": true,
