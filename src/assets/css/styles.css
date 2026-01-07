@@ -9,6 +9,7 @@
     --discord-color: #7289da;
     --discord-color-hover: #5b73c7;
     --donation-button-color: #10b981;
+    --memory-stat-color: #d3d3d3;
 }
 
 * {
@@ -271,7 +272,6 @@ body {
     padding: 8px;
     flex: 1;
     outline: none;
-    color: white;
 }
 
 .discord-join-button {
@@ -376,4 +376,68 @@ code {
     background-color: var(--bg-item-muted);
     padding: 1px 4px;
     border-radius: 2px;
+}
+
+.memory-section {
+    padding: 12px;
+}
+
+.memory-stats {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.memory-stat {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: var(--bg-item-muted);
+}
+
+.memory-stat-value {
+    font-size: 20px;
+    color: var(--memory-stat-color);
+    font-weight: bold;
+}
+
+.memory-stat-label {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.memory-sub-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+.memory-sub-tab {
+    flex: 1;
+    padding: 6px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 10px;
+    background: var(--bg-item-muted);
+    color: var(--text-muted);
+    transition: all 0.2s;
+}
+
+.memory-sub-tab:hover {
+    background: var(--border-main);
+    color: var(--primary);
+}
+
+.memory-sub-tab.active {
+    background: var(--bg-tab-active);
+    color: white;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 20px;
+    font-size: 11px;
+    color: var(--text-muted);
 }
