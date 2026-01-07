@@ -27,7 +27,7 @@
                 <button id="panel-logs" class="panel-tab">Logs</button>
             </div>
             <!-- Chat -->
-            <div id="chat-container" class="panel-tab-content active">
+            <div id="chat-container" class="panel-tab-content">
                 <div id="chat-messages">
                     <div class="chat-message reminder">
                         <p>Click on the microphone or type a message.</p>
@@ -413,6 +413,47 @@
                                 </p>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Memory -->
+            <div id="memory-container" class="panel-tab-content active">
+                <div class="memory-section">
+                    <div class="memory-stats">
+                        <div class="memory-stat">
+                            <div class="memory-stat-value" id="stat-long-term">
+                                -
+                            </div>
+                            <div class="memory-stat-label">Memory</div>
+                        </div>
+                        <div class="memory-stat">
+                            <div class="memory-stat-value" id="stat-short-term">
+                                -
+                            </div>
+                            <div class="memory-stat-label">Conversation</div>
+                        </div>
+                    </div>
+                    <div class="memory-sub-tabs">
+                        <button class="memory-sub-tab active" id="mem-tab-list">
+                            Memories
+                        </button>
+                        <button
+                            class="memory-sub-tab"
+                            id="mem-tab-conversation"
+                        >
+                            Conversation
+                        </button>
+                        <button class="memory-sub-tab" id="mem-tab-user">
+                            User Info
+                        </button>
+                        <button class="memory-sub-tab" id="mem-tab-add">
+                            + Add
+                        </button>
+                    </div>
+
+                    <div id="memory-sub-content">
+                        <div class="empty-state">Loading...</div>
                     </div>
                 </div>
             </div>
