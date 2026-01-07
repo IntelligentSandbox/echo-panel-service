@@ -6,6 +6,9 @@
     --text-muted: #999999;
     --bg-item-muted: #363636;
     --bg-header: #272727ff;
+    --discord-color: #7289da;
+    --discord-color-hover: #5b73c7;
+    --donation-button-color: #10b981;
 }
 
 * {
@@ -247,4 +250,130 @@ body {
 
 .control-buttons button:active {
     transform: scale(0.88);
+}
+
+.discord-join-form {
+    margin-top: 10px;
+}
+
+.discord-join-form-input {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.discord-channel-name {
+    background: var(--bg-item-muted);
+    color: white;
+    font-size: 11px;
+    border: none;
+    border-radius: 4px;
+    padding: 8px;
+    flex: 1;
+    outline: none;
+    color: white;
+}
+
+.discord-join-button {
+    border-radius: 4px;
+    border: none;
+    padding: 8px 12px;
+    color: white;
+    cursor: pointer;
+    font-size: 11px;
+    background: var(--discord-color);
+    transition: all 0.2s;
+}
+
+.discord-join-button:active {
+    transform: scale(0.88);
+}
+
+.discord-join-button:hover {
+    background: var(--discord-color-hover);
+}
+
+.donation-test-form {
+    margin-top: 10px;
+}
+
+.donation-test-name,
+.donation-test-amount {
+    background: var(--bg-item-muted);
+    color: white;
+    width: 100%;
+    margin-bottom: 6px;
+    font-size: 11px;
+    border: none;
+    border-radius: 4px;
+    padding: 8px;
+    flex: 1;
+    outline: none;
+    color: white;
+}
+
+.donation-test-message {
+    background: var(--bg-item-muted);
+    color: white;
+    width: 100%;
+    min-height: 50px;
+    margin-bottom: 6px;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    resize: vertical;
+    font-size: 11px;
+    outline: none;
+    color: white;
+}
+
+.donation-test-button {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: none;
+    font-size: 11px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--donation-button-color);
+}
+
+.sound-list {
+    margin-top: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+    border-radius: 4px;
+    padding: 8px;
+    background: var(--bg-item-muted);
+}
+
+.loading-sound-text {
+    color: var(--text-muted);
+    font-size: 11px;
+}
+
+.sound-test-name {
+    flex: 1;
+    background: var(--bg-item-muted);
+    color: white;
+    width: 100%;
+    border-radius: 4px;
+    padding: 6px 8px;
+    font-size: 11px;
+    border: none;
+    outline: none;
+}
+
+.integration-info {
+    font-size: 10px;
+    padding: 6px;
+    margin-top: 6px;
+    color: var(--text-muted);
+}
+
+code {
+    background-color: var(--bg-item-muted);
+    padding: 1px 4px;
+    border-radius: 2px;
 }

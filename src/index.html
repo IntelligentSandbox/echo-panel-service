@@ -26,8 +26,8 @@
                 <button id="panel-memory" class="panel-tab">Memory</button>
                 <button id="panel-logs" class="panel-tab">Logs</button>
             </div>
-
-            <div id="chat-container" class="panel-tab-content">
+            <!-- Chat -->
+            <div id="chat-container" class="panel-tab-content active">
                 <div id="chat-messages">
                     <div class="chat-message reminder">
                         <p>Click on the microphone or type a message.</p>
@@ -68,8 +68,8 @@
                     </button>
                 </div>
             </div>
-            <div id="controls-container" class="panel-tab-content active">
-                <!-- Keep this at the top of container -->
+            <!-- Controls -->
+            <div id="controls-container" class="panel-tab-content">
                 <div class="status-section">
                     <div class="status-grid">
                         <div class="status-item">
@@ -171,7 +171,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="control-buttons" style="margin-top: 8px">
+                        <div class="control-buttons">
                             <!-- TODO: add a onclick event -->
                             <button>Refresh</button>
                         </div>
@@ -222,6 +222,196 @@
                         <div class="control-group-label">Actions</div>
                         <div class="control-buttons">
                             <button>Clear</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Integrations -->
+            <div id="integrations-container" class="panel-tab-content">
+                <div class="status-section">
+                    <!-- TODO: add integrations -->
+                    <div class="control-group">
+                        <div class="control-group-label">Twitch Chat</div>
+                        <div class="status-grid">
+                            <div class="status-item">
+                                <div class="status-label">Status</div>
+                                <div
+                                    class="status-value"
+                                    id="twitch-connection"
+                                >
+                                    Checking...
+                                </div>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-label">Channel</div>
+                                <div class="status-value" id="twitch-channel">
+                                    -
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="control-group-label">Discord</div>
+                        <div class="integration-status" id="discord-status">
+                            <div class="status-grid">
+                                <div class="status-item">
+                                    <div class="status-label">Status</div>
+                                    <div
+                                        class="status-value"
+                                        id="discord-connection"
+                                    >
+                                        Checking...
+                                    </div>
+                                </div>
+                                <div class="status-item">
+                                    <div class="status-label">Voice</div>
+                                    <div
+                                        class="status-value"
+                                        id="discord-voice"
+                                    >
+                                        -
+                                    </div>
+                                </div>
+                                <div class="status-item">
+                                    <div class="status-label">Guilds</div>
+                                    <div
+                                        class="status-value"
+                                        id="discord-guilds"
+                                    >
+                                        -
+                                    </div>
+                                </div>
+                                <div class="status-item">
+                                    <div class="status-label">Listening</div>
+                                    <div
+                                        class="status-value"
+                                        id="discord-listening"
+                                    >
+                                        -
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Needs styling for everything below -->
+                            <div class="discord-join-form">
+                                <div class="discord-join-form-input">
+                                    <input
+                                        type="text"
+                                        class="discord-channel-name"
+                                        id="discord-channel-name"
+                                        placeholder="Channel name or ID"
+                                    />
+                                    <button class="discord-join-button">
+                                        Join VC
+                                    </button>
+                                </div>
+                                <div></div>
+                                <div class="control-buttons">
+                                    <!-- TODO: add a onclick event -->
+                                    <button>Leave VC</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Donation TTS (Testing) -->
+                    <div class="control-group">
+                        <div class="control-group-label">
+                            Donation TTS (Testing)
+                        </div>
+                        <div class="integration-status" id="donation-status">
+                            <div class="status-grid">
+                                <div class="status-item">
+                                    <div class="status-label">Status</div>
+                                    <div
+                                        class="status-value"
+                                        id="donation-enabled"
+                                    >
+                                        Enabled
+                                    </div>
+                                </div>
+                                <div class="status-item">
+                                    <div class="status-label">Queue</div>
+                                    <div
+                                        class="status-value"
+                                        id="donation-queue"
+                                    >
+                                        0
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="donation-test-form">
+                                <input
+                                    type="text"
+                                    id="donation-test-name"
+                                    class="donation-test-name"
+                                    placeholder="Donor name"
+                                />
+                                <input
+                                    type="number"
+                                    class="donation-test-amount"
+                                    id="donation-test-amount"
+                                    placeholder="Amount"
+                                    value="5.00"
+                                    step="0.01"
+                                    min="0"
+                                />
+                                <textarea
+                                    id="donation-test-message"
+                                    class="donation-test-message"
+                                    placeholder="Donation message..."
+                                ></textarea>
+                                <button class="donation-test-button">
+                                    Donate
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-group-label">Sound Effects</div>
+                        <div class="integration-status" id="sounds-status">
+                            <div class="status-grid">
+                                <div class="status-item">
+                                    <div class="status-label">Available</div>
+                                    <div class="status-value" id="sounds-count">
+                                        -
+                                    </div>
+                                </div>
+                                <div class="status-item">
+                                    <div class="status-label">Aliases</div>
+                                    <div
+                                        class="status-value"
+                                        id="sounds-aliases"
+                                    >
+                                        -
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- TODO: Add available sounds here -->
+                            <div id="sounds-list" class="sound-list">
+                                <div class="loading-sound-text">
+                                    Loading sounds...
+                                </div>
+                            </div>
+                            <div
+                                class="control-buttons"
+                                style="margin-top: 8px"
+                            >
+                                <button>Refresh</button>
+                                <input
+                                    type="text"
+                                    id="sound-test-name"
+                                    class="sound-test-name"
+                                    placeholder="Sound name"
+                                />
+                                <button>Play</button>
+                            </div>
+                            <div class="integration-info">
+                                <p>
+                                    The AI can use <code>play_sound</code> tool
+                                    to play sounds.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
