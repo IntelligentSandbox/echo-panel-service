@@ -27,7 +27,7 @@
                 <button id="panel-logs" class="panel-tab">Logs</button>
             </div>
 
-            <div id="chat-container" class="panel-tab-content active">
+            <div id="chat-container" class="panel-tab-content">
                 <div id="chat-messages">
                     <div class="chat-message reminder">
                         <p>Click on the microphone or type a message.</p>
@@ -68,7 +68,8 @@
                     </button>
                 </div>
             </div>
-            <div id="controls-container" class="panel-tab-content">
+            <div id="controls-container" class="panel-tab-content active">
+                <!-- Keep this at the top of container -->
                 <div class="status-section">
                     <div class="status-grid">
                         <div class="status-item">
@@ -94,6 +95,133 @@
                             <div class="status-value" id="speaking-status">
                                 No
                             </div>
+                        </div>
+                    </div>
+                    <!-- Different controller groups -->
+                    <!-- Performance -->
+                    <div class="control-group">
+                        <div class="control-group-label">Performance</div>
+                        <div class="status-grid">
+                            <div class="status-item">
+                                <div class="status-label">Last Response</div>
+                                <div class="status-value" id="perf-last-time">
+                                    -
+                                </div>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-label">Avg Response</div>
+                                <div class="status-value" id="perf-avg-time">
+                                    -
+                                </div>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-label">LLM</div>
+                                <div class="status-value" id="perf-llm-time">
+                                    -
+                                </div>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-label">TTS</div>
+                                <div class="status-value" id="perf-tts-time">
+                                    -
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Rate Limits -->
+                    <div class="control-group" id="rate-limits-section">
+                        <div class="control-group-label">
+                            Rate Limits (Groq)
+                        </div>
+                        <div class="status-grid">
+                            <div class="status-item">
+                                <div class="status-label">Requests</div>
+                                <div
+                                    class="status-value"
+                                    id="rate-remaining-requests"
+                                >
+                                    -
+                                </div>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-label">Tokens</div>
+                                <div
+                                    class="status-value"
+                                    id="rate-remaining-tokens"
+                                >
+                                    -
+                                </div>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-label">Req Reset</div>
+                                <div
+                                    class="status-value"
+                                    id="rate-reset-requests"
+                                >
+                                    -
+                                </div>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-label">Token Reset</div>
+                                <div
+                                    class="status-value"
+                                    id="rate-reset-tokens"
+                                >
+                                    -
+                                </div>
+                            </div>
+                        </div>
+                        <div class="control-buttons" style="margin-top: 8px">
+                            <!-- TODO: add a onclick event -->
+                            <button>Refresh</button>
+                        </div>
+                    </div>
+
+                    <!-- Expressions -->
+                    <div class="control-group">
+                        <div class="control-group-label">Expression</div>
+                        <div class="control-buttons">
+                            <button>Neutral</button>
+                            <button>Happy</button>
+                            <button>Sad</button>
+                            <button>Angry</button>
+                            <button>Thinking</button>
+                            <button>Surprised</button>
+                            <button>Confused</button>
+                            <button>Satisfied</button>
+                        </div>
+                    </div>
+
+                    <!-- States -->
+                    <div class="control-group">
+                        <div class="control-group-label">State</div>
+                        <div class="control-buttons">
+                            <button>Idle</button>
+                            <button>Listening</button>
+                            <button>Thinking</button>
+                            <button>Speaking</button>
+                            <button>Sleeping</button>
+                        </div>
+                    </div>
+
+                    <!-- Content Mode -->
+                    <!-- TODO: add a onclick event and highlight the button which is active -->
+                    <div class="control-group">
+                        <div class="control-group-label">Content Mode</div>
+                        <div class="control-buttons">
+                            <button id="mode-filtered" class="active">
+                                Filtered
+                            </button>
+                            <button id="mode-unfiltered">Unfiltered</button>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <!-- TODO: clear memory and history (should be in red) -->
+                    <div class="control-group">
+                        <div class="control-group-label">Actions</div>
+                        <div class="control-buttons">
+                            <button>Clear</button>
                         </div>
                     </div>
                 </div>
