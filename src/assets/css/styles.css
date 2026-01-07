@@ -1,4 +1,5 @@
 :root {
+    /* TODO: fix naming later*/
     --primary: #d3d3d3;
     --bg-tab-active: #212121ff;
     --border-main: #444444;
@@ -190,7 +191,7 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .status-item {
@@ -210,4 +211,40 @@ body {
     font-size: 14px;
     color: white;
     font-weight: 500;
+}
+
+.control-group {
+    margin-bottom: 12px;
+}
+
+.control-group-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.control-buttons {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.control-buttons button {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    background: var(--bg-item-muted);
+    color: white;
+    transition: all 0.2s;
+}
+
+.control-buttons button:hover {
+    background: var(--border-main);
+}
+
+.control-buttons button:active {
+    transform: scale(0.88);
 }
