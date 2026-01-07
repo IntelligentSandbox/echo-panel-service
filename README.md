@@ -13,3 +13,7 @@ Controls
 Integration
 
 <img width="462" height="632" alt="Screenshot 2026-01-07 at 12 00 44 PM" src="https://github.com/user-attachments/assets/97d5cd40-0d59-4e3e-b110-4ac50b6377ce" />
+
+Memory
+
+<img width="462" height="632" alt="Screenshot 2026-01-07 at 2 22 06 PM" src="https://github.com/user-attachments/assets/782a3bcc-6ba7-4b8e-8e23-1dc34b5ad841" />
