@@ -19,3 +19,30 @@ export class PanelUI {
         this.currentTab = tab
     }
 }
+
+export class StatusUI {
+    updateConnection(status, isError) {
+        const connectionStatus = document.querySelector('#connection-status')
+        const dot = document.getElementById('status-dot')
+        connectionStatus.innerText = status
+        connectionStatus.style.color = isError
+            ? 'var(--status-color-error)'
+            : 'var(--status-color-ok)'
+        dot.classList.toggle('disconnected', isError)
+    }
+
+    updateState(state) {
+        document.querySelector('#panel-state').textContent = state
+        document.querySelector('#avatar-state').textContent = state
+
+        const dot = document.querySelector('#status-dot')
+        if (dot) {
+            const visualStates = ['thinking', 'speaking']
+            dot.classList.remove(...visualStates)
+
+            if (visualStates.includes(state)) {
+                dot.classList.add(state)
+            }
+        }
+    }
+}
