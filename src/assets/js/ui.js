@@ -45,4 +45,20 @@ export class StatusUI {
             }
         }
     }
+
+    updateExpression(expression) {
+        document.getElementById('avatar-expression').textContent = expression
+    }
+
+    updateSpeech(isSpeaking) {
+        document.getElementById('speaking-status').textContent = isSpeaking
+            ? 'Yes'
+            : 'No'
+    }
+
+    updateMicButton(isActive) {
+        document
+            .getElementById('microphone-chat-button')
+            ?.classList.toggle('active', isActive)
+    }
 }
