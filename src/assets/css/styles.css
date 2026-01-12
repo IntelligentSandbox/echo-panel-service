@@ -15,6 +15,7 @@
     --status-color-error: #ef4444;
     --status-color-warning: #fbbf24;
     --status-color-info: #3b82f6;
+    --microphone-active-color: rgba(88, 152, 255, 0.18);
 }
 
 * {
@@ -212,8 +213,12 @@ body {
     padding: 10px;
 }
 
-#continuous-chat-button {
-    display: none;
+#microphone-chat-button.active {
+    background-color: var(--microphone-active-color);
+}
+
+#microphone-chat-button.active svg {
+    /* todo: figure out how to do this */
 }
 
 #stop-chat-button {

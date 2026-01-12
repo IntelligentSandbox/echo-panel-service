@@ -7,14 +7,7 @@ const API = (path) => `${CONFIG.apiUrl}${path}`
 
 const panel = new PanelUI()
 const memory = new MemoryUI()
-
-window.switchTab = (tab) => {
-    panel.switchTab(tab)
-}
-
-window.switchSubTab = (tab) => {
-    memory.switchSubTab(tab)
-}
+const status = new StatusUI()
 
 document.querySelectorAll('.panel-tab').forEach((tab) => {
     tab.addEventListener('click', () => {
@@ -28,13 +21,31 @@ document.querySelectorAll('.memory-sub-tab').forEach((tab) => {
     })
 })
 
+async function toggleMicButton(isActive) {
+    console.log('toggleMicButton', isActive)
+    status.updateMicButton(isActive)
+}
+
+window.switchTab = (tab) => {
+    panel.switchTab(tab)
+}
+
+window.switchSubTab = (tab) => {
+    memory.switchSubTab(tab)
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    const status = new StatusUI()
     const connect = new Connect()
 
     connect.addEventListener('status-change', (e) => {
         status.updateConnection(e.detail.status, e.detail.isError)
     })
+
+    document
+        .getElementById('microphone-chat-button')
+        .addEventListener('click', () => {
+            toggleMicButton(true)
+        })
 
     connect.connect()
 })
