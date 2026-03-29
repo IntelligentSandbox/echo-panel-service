@@ -41,10 +41,20 @@ document.addEventListener('DOMContentLoaded', () => {
         status.updateConnection(e.detail.status, e.detail.isError)
     })
 
+    status.initMicButtonHover()
+
+    document.querySelectorAll('#content-mode-buttons button').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('#content-mode-buttons button').forEach((b) => b.classList.remove('active'))
+            btn.classList.add('active')
+        })
+    })
+
     document
         .getElementById('microphone-chat-button')
         .addEventListener('click', () => {
-            toggleMicButton(true)
+            const btn = document.getElementById('microphone-chat-button')
+            toggleMicButton(!btn.classList.contains('active'))
         })
 
     connect.connect()

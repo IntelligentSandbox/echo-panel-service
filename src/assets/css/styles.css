@@ -15,7 +15,7 @@
     --status-color-error: #ef4444;
     --status-color-warning: #fbbf24;
     --status-color-info: #3b82f6;
-    --microphone-active-color: rgba(88, 152, 255, 0.18);
+    --microphone-active-color: rgba(88, 152, 255, 0.10);
 }
 
 * {
@@ -213,16 +213,32 @@ body {
     padding: 10px;
 }
 
+#microphone-chat-button .icon-stop {
+    display: none;
+}
+
 #microphone-chat-button.active {
     background-color: var(--microphone-active-color);
 }
 
 #microphone-chat-button.active svg {
-    /* todo: figure out how to do this */
+    fill: rgba(88, 152, 255, 0.85);
 }
 
-#stop-chat-button {
+#microphone-chat-button.active .icon-stop {
     display: none;
+}
+
+#microphone-chat-button.stopping .icon-mic {
+    display: none;
+}
+
+#microphone-chat-button.stopping .icon-stop {
+    display: block;
+}
+
+#microphone-chat-button.stopping {
+    background-color: rgba(88, 152, 255, 0.20);
 }
 
 .status-grid {
@@ -285,6 +301,27 @@ body {
 
 .control-buttons button:active {
     transform: scale(0.88);
+}
+
+.control-buttons button.active {
+    background: #5898ff;
+    color: white;
+}
+
+#content-mode-buttons {
+    gap: 0;
+}
+
+#content-mode-buttons button:active {
+    transform: none;
+}
+
+#content-mode-buttons button:first-child {
+    border-radius: 4px 0 0 4px;
+}
+
+#content-mode-buttons button:last-child {
+    border-radius: 0 4px 4px 0;
 }
 
 .discord-join-form {
