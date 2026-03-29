@@ -57,8 +57,17 @@ export class StatusUI {
     }
 
     updateMicButton(isActive) {
-        document
-            .getElementById('microphone-chat-button')
-            ?.classList.toggle('active', isActive)
+        const btn = document.getElementById('microphone-chat-button')
+        if (!btn) return
+        btn.classList.toggle('active', isActive)
+        btn.classList.toggle('stopping', isActive)
+    }
+
+    initMicButtonHover() {
+        const btn = document.getElementById('microphone-chat-button')
+        if (!btn) return
+        btn.addEventListener('mouseenter', () => {
+            if (btn.classList.contains('active')) btn.classList.add('stopping')
+        })
     }
 }
