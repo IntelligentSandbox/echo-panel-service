@@ -1,35 +1,31 @@
 export class MemoryUI {
     constructor() {
         this.currentSubTab = 'list'
+        this.views = {
+            list: document.getElementById('memory-view-list'),
+            conversation: document.getElementById('memory-view-conversation'),
+            user: document.getElementById('memory-view-user'),
+            add: document.getElementById('memory-view-add'),
+        }
+        document.getElementById('submit-memory-btn').addEventListener('click', () => this.submitNewMemory())
     }
 
     switchSubTab(tab) {
         this.currentSubTab = tab
-        document.querySelectorAll('.memory-sub-tab').forEach((tab) => {
-            tab.classList.remove('active')
-        })
-
-        document.querySelector(`#mem-tab-${tab}`).classList.add('active')
-
-        if (this.renderSubTab) this.renderSubTab()
+        document.querySelectorAll('.memory-sub-tab').forEach((t) => t.classList.remove('active'))
+        document.getElementById(`mem-tab-${tab}`).classList.add('active')
+        this.renderSubTab()
     }
 
     renderSubTab() {
-        switch (this.currentSubTab) {
-            case 'list':
-                console.log('Rendering list')
-                break
-            case 'conversation':
-                console.log('Rendering conversation')
-                break
-            case 'user':
-                console.log('Rendering user')
-                break
-            case 'add':
-                console.log('Rendering add')
-                break
-            default:
-                break
-        }
+        Object.values(this.views).forEach((v) => v?.classList.add('memory-view-hidden'))
+        this.views[this.currentSubTab]?.classList.remove('memory-view-hidden')
+    }
+
+    submitNewMemory() {
+        const content = document.getElementById('add-memory-content').value.trim()
+        const type = document.getElementById('add-memory-type').value
+        if (!content) return
+        console.log('TODO: post memory', { content, type })
     }
 }
