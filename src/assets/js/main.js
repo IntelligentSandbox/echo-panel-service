@@ -57,5 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleMicButton(!btn.classList.contains('active'))
         })
 
+    document.getElementById('discord-vc-btn').addEventListener('click', () => {
+        const btn = document.getElementById('discord-vc-btn')
+        const joined = btn.classList.toggle('leaving')
+        btn.textContent = joined ? 'Leave' : 'Join'
+    })
+
     connect.connect()
 })
