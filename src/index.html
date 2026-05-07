@@ -256,10 +256,7 @@
                                         id="discord-channel-name"
                                         placeholder="Channel name or ID"
                                     />
-                                    <button class="discord-join-button">Join VC</button>
-                                </div>
-                                <div class="control-buttons">
-                                    <button>Leave VC</button>
+                                    <button class="discord-join-button" id="discord-vc-btn">Join</button>
                                 </div>
                             </div>
                         </div>
@@ -312,7 +309,7 @@
                                     class="donation-test-message"
                                     placeholder="Donation message..."
                                 ></textarea>
-                                <button class="donation-test-button">
+                                <button class="donation-test-button" disabled>
                                     Donate
                                 </button>
                             </div>
@@ -405,7 +402,32 @@
                     </div>
 
                     <div id="memory-sub-content">
-                        <div class="empty-state">Loading...</div>
+                        <div id="memory-view-list">
+                            <div class="empty-state">Loading...</div>
+                        </div>
+
+                        <div id="memory-view-conversation" class="memory-view-hidden">
+                            <div class="empty-state">No conversation history.</div>
+                        </div>
+
+                        <div id="memory-view-user" class="memory-view-hidden">
+                            <div class="empty-state">No user info yet.</div>
+                        </div>
+
+                        <div id="memory-view-add" class="memory-view-hidden">
+                            <div class="memory-add-form">
+                                <select id="add-memory-type">
+                                    <option value="fact">Fact</option>
+                                    <option value="preference">Preference</option>
+                                    <option value="event">Event</option>
+                                </select>
+                                <textarea
+                                    id="add-memory-content"
+                                    placeholder="What should the AI remember?"
+                                ></textarea>
+                                <button id="submit-memory-btn">Add Memory</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -414,8 +436,8 @@
             <div id="logs-container" class="panel-tab-content">
                 <div id="log-messages"></div>
                 <div class="log-controls-bar">
-                    <button>Clear</button>
                     <button>Debug</button>
+                    <button>Clear</button>
                 </div>
             </div>
         </div>
