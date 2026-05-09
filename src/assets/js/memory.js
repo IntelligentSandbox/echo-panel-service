@@ -26,6 +26,6 @@ export class MemoryUI {
         const content = document.getElementById('add-memory-content').value.trim()
         const type = document.getElementById('add-memory-type').value
         if (!content) return
-        console.log('TODO: post memory', { content, type })
+        console.log('TODO(270e): post memory', { content, type })
     }
 }
