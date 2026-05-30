@@ -219,6 +219,18 @@ body {
 
 #microphone-chat-button.active {
     background-color: var(--microphone-active-color);
+    animation: pulse-mic 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse-mic {
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.65;
+    }
 }
 
 #microphone-chat-button.active svg {
