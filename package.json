@@ -3,13 +3,13 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "main": "main.js",
   "scripts": {
-    "tauri": "tauri",
-    "tauri:dev": "tauri dev",
-    "tauri:fresh": "cargo clean --manifest-path src-tauri/Cargo.toml && tauri dev"
+    "dev": "electron .",
+    "format": "prettier --write \"src/**/*.{js,html,css}\""
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2",
+    "electron": "^33.4.11",
     "prettier": "3.7.4"
   }
 }

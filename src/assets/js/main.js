@@ -45,7 +45,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('#content-mode-buttons button').forEach((btn) => {
         btn.addEventListener('click', () => {
-            document.querySelectorAll('#content-mode-buttons button').forEach((b) => b.classList.remove('active'))
+            document
+                .querySelectorAll('#content-mode-buttons button')
+                .forEach((b) => b.classList.remove('active'))
             btn.classList.add('active')
         })
     })
