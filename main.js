@@ -1,6 +1,7 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, Menu } from "electron";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import { watch } from "fs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -17,8 +18,15 @@ function createWindow() {
     });
 
     win.loadFile(join(__dirname, "src/index.html"));
+
+    watch(join(__dirname, "src"), { recursive: true }, () => {
+        win.webContents.reload();
+    });
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+    Menu.setApplicationMenu(null);
+    createWindow();
+});
 
 app.on("window-all-closed", () => app.quit());
