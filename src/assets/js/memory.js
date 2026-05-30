@@ -12,6 +12,13 @@ export class MemoryUI {
             .addEventListener('click', () => this.submitNewMemory())
     }
 
+    setDefaults() {
+        const lt = document.getElementById('stat-long-term')
+        const st = document.getElementById('stat-short-term')
+        if (lt) lt.textContent = '-'
+        if (st) st.textContent = '-'
+    }
+
     switchSubTab(tab) {
         this.currentSubTab = tab
         document
