@@ -14,7 +14,7 @@
     --status-color-error: #ef4444;
     --status-color-warning: #fbbf24;
     --status-color-info: #3b82f6;
-    --microphone-active-color: rgba(88, 152, 255, 0.10);
+    --microphone-active-color: rgba(88, 152, 255, 0.1);
 }
 
 * {
@@ -238,7 +238,7 @@ body {
 }
 
 #microphone-chat-button.stopping {
-    background-color: rgba(88, 152, 255, 0.20);
+    background-color: rgba(88, 152, 255, 0.2);
 }
 
 .status-grid {

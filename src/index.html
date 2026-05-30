@@ -5,7 +5,6 @@
         <link rel="stylesheet" href="/assets/css/styles.css" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Panel Service</title>
-        <script type="module" src="/assets/js/main.js" defer></script>
     </head>
     <body>
         <div id="control-panel">
@@ -196,7 +195,9 @@
                     <div class="control-group">
                         <div class="control-group-label">Profanity Filter</div>
                         <div class="control-buttons" id="content-mode-buttons">
-                            <button id="mode-filtered" class="active">On</button>
+                            <button id="mode-filtered" class="active">
+                                On
+                            </button>
                             <button id="mode-unfiltered">Off</button>
                         </div>
                     </div>
@@ -241,11 +242,23 @@
                             <div class="status-grid">
                                 <div class="status-item">
                                     <div class="status-label">Status</div>
-                                    <div class="status-value" id="discord-connection">Checking...</div>
+                                    <div
+                                        class="status-value"
+                                        id="discord-connection"
+                                    >
+                                        Checking...
+                                    </div>
                                 </div>
                                 <div class="status-item">
-                                    <div class="status-label">Voice Channel</div>
-                                    <div class="status-value" id="discord-voice">-</div>
+                                    <div class="status-label">
+                                        Voice Channel
+                                    </div>
+                                    <div
+                                        class="status-value"
+                                        id="discord-voice"
+                                    >
+                                        -
+                                    </div>
                                 </div>
                             </div>
                             <div class="discord-join-form">
@@ -256,7 +269,12 @@
                                         id="discord-channel-name"
                                         placeholder="Channel name or ID"
                                     />
-                                    <button class="discord-join-button" id="discord-vc-btn">Join</button>
+                                    <button
+                                        class="discord-join-button"
+                                        id="discord-vc-btn"
+                                    >
+                                        Join
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -406,8 +424,13 @@
                             <div class="empty-state">Loading...</div>
                         </div>
 
-                        <div id="memory-view-conversation" class="memory-view-hidden">
-                            <div class="empty-state">No conversation history.</div>
+                        <div
+                            id="memory-view-conversation"
+                            class="memory-view-hidden"
+                        >
+                            <div class="empty-state">
+                                No conversation history.
+                            </div>
                         </div>
 
                         <div id="memory-view-user" class="memory-view-hidden">
@@ -418,14 +441,18 @@
                             <div class="memory-add-form">
                                 <select id="add-memory-type">
                                     <option value="fact">Fact</option>
-                                    <option value="preference">Preference</option>
+                                    <option value="preference">
+                                        Preference
+                                    </option>
                                     <option value="event">Event</option>
                                 </select>
                                 <textarea
                                     id="add-memory-content"
                                     placeholder="What should the AI remember?"
                                 ></textarea>
-                                <button id="submit-memory-btn">Add Memory</button>
+                                <button id="submit-memory-btn">
+                                    Add Memory
+                                </button>
                             </div>
                         </div>
                     </div>
