@@ -630,3 +630,26 @@ code {
 .log-controls-bar button:active {
     transform: scale(0.88);
 }
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-main) transparent;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-main);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
