@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu } from "electron";
+import { app, BrowserWindow, Menu, session } from "electron";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { watch } from "fs";
@@ -14,6 +14,7 @@ function createWindow() {
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
+            webSecurity: false,
         },
     });
 
@@ -26,6 +27,17 @@ function createWindow() {
 
 app.whenReady().then(() => {
     Menu.setApplicationMenu(null);
+
+    // let the renderer use the microphone without a prompt
+    session.defaultSession.setPermissionRequestHandler(
+        (_webContents, permission, callback) => {
+            callback(permission === "media");
+        }
+    );
+    session.defaultSession.setPermissionCheckHandler(
+        (_webContents, permission) => permission === "media"
+    );
+
     createWindow();
 });
 
