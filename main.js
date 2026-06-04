@@ -10,7 +10,6 @@ function createWindow() {
         width: 350,
         height: 520,
         resizable: true,
-        alwaysOnTop: true,
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
@@ -18,6 +17,7 @@ function createWindow() {
         },
     });
 
+    win.setAlwaysOnTop(true, "floating");
     win.loadFile(join(__dirname, "src/index.html"));
 
     watch(join(__dirname, "src"), { recursive: true }, () => {
