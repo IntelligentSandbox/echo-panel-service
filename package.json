@@ -10,7 +10,7 @@
     "format": "prettier --write \"src/**/*.{js,html,css}\""
   },
   "devDependencies": {
-    "electron": "^33.4.11",
-    "prettier": "3.7.4"
+    "electron": "^42.3.3",
+    "prettier": "3.8.3"
   }
 }
