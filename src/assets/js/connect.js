@@ -1,3 +1,4 @@
+import { MicVAD } from '@ricky0123/vad-web'
 import { CONFIG } from './config.js'
 
 export class Connect extends EventTarget {
@@ -65,16 +66,45 @@ export class Connect extends EventTarget {
     }
 }
 
-// listens nonstop and hands back an audio blob each time speech is detected
+// wraps the float32 utterance the vad hands back into a 16khz mono pcm16 wav blob
+function float32ToWav(samples, sampleRate) {
+    const buffer = new ArrayBuffer(44 + samples.length * 2)
+    const view = new DataView(buffer)
+    const writeStr = (offset, str) => {
+        for (let i = 0; i < str.length; i++) {
+            view.setUint8(offset + i, str.charCodeAt(i))
+        }
+    }
+
+    writeStr(0, 'RIFF')
+    view.setUint32(4, 36 + samples.length * 2, true)
+    writeStr(8, 'WAVE')
+    writeStr(12, 'fmt ')
+    view.setUint32(16, 16, true)
+    view.setUint16(20, 1, true)
+    view.setUint16(22, 1, true)
+    view.setUint32(24, sampleRate, true)
+    view.setUint32(28, sampleRate * 2, true)
+    view.setUint16(32, 2, true)
+    view.setUint16(34, 16, true)
+    writeStr(36, 'data')
+    view.setUint32(40, samples.length * 2, true)
+
+    let offset = 44
+    for (let i = 0; i < samples.length; i++) {
+        const s = Math.max(-1, Math.min(1, samples[i]))
+        view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, true)
+        offset += 2
+    }
+
+    return new Blob([view], { type: 'audio/wav' })
+}
+
+// listens nonstop with silero vad and hands back a wav blob each utterance
 export class ContinuousListener {
     constructor() {
         this.isListening = false
-        this.mediaRecorder = null
-        this.audioChunks = []
-        this.audioContext = null
-        this.micStream = null
-        this.speechStartTime = null
-        this.isSpeechActive = false
+        this.vad = null
         this.onSpeechStart = null
         this.onSpeechEnd = null
         this.onAudioReady = null
@@ -84,79 +114,20 @@ export class ContinuousListener {
     async start() {
         if (this.isListening) return true
         try {
-            this.micStream = await navigator.mediaDevices.getUserMedia({
-                audio: {
-                    channelCount: 1,
-                    echoCancellation: true,
-                    noiseSuppression: true,
+            this.vad = await MicVAD.new({
+                model: 'v5',
+                baseAssetPath: '/',
+                onnxWASMBasePath: '/',
+                redemptionFrames: 12,
+                minSpeechFrames: 5,
+                preSpeechPadFrames: 3,
+                onSpeechStart: () => this.onSpeechStart?.(),
+                onSpeechEnd: async (audio) => {
+                    await this.onAudioReady?.(float32ToWav(audio, 16000))
+                    this.onSpeechEnd?.()
                 },
             })
-            this.audioContext = new (
-                window.AudioContext || window.webkitAudioContext
-            )()
-            const source = this.audioContext.createMediaStreamSource(
-                this.micStream
-            )
-            const processor = this.audioContext.createScriptProcessor(
-                4096,
-                1,
-                1
-            )
-            this.mediaRecorder = new MediaRecorder(this.micStream)
-            this.audioChunks = []
-            this.mediaRecorder.ondataavailable = (e) => {
-                if (e.data.size > 0) this.audioChunks.push(e.data)
-            }
-
-            let silenceFrames = 0
-            let processing = false
-            processor.onaudioprocess = async (e) => {
-                if (!this.isListening || processing) return
-                const input = e.inputBuffer.getChannelData(0)
-                let sum = 0
-                for (let i = 0; i < input.length; i++) {
-                    sum += input[i] * input[i]
-                }
-                const energy = Math.sqrt(sum / input.length)
-                const speaking = energy > 0.015
-
-                if (speaking && !this.isSpeechActive) {
-                    this.isSpeechActive = true
-                    silenceFrames = 0
-                    this.speechStartTime = Date.now()
-                    this.audioChunks = []
-                    if (this.mediaRecorder.state === 'inactive') {
-                        this.mediaRecorder.start(100)
-                    }
-                    this.onSpeechStart?.()
-                } else if (this.isSpeechActive) {
-                    silenceFrames = speaking ? 0 : silenceFrames + 1
-                    if (silenceFrames >= 12) {
-                        const duration = Date.now() - this.speechStartTime
-                        this.isSpeechActive = false
-                        silenceFrames = 0
-                        if (this.mediaRecorder.state === 'recording') {
-                            processing = true
-                            this.mediaRecorder.stop()
-                            // let the recorder flush its final chunk
-                            await new Promise((r) => setTimeout(r, 300))
-                            if (this.audioChunks.length > 0 && duration > 500) {
-                                await this.onAudioReady?.(
-                                    new Blob(this.audioChunks, {
-                                        type: 'audio/webm',
-                                    })
-                                )
-                            }
-                            this.audioChunks = []
-                            processing = false
-                            this.onSpeechEnd?.()
-                        }
-                    }
-                }
-            }
-
-            source.connect(processor)
-            processor.connect(this.audioContext.destination)
+            this.vad.start()
             this.isListening = true
             return true
         } catch (e) {
@@ -167,19 +138,9 @@ export class ContinuousListener {
 
     stop() {
         this.isListening = false
-        this.isSpeechActive = false
-        if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
-            this.mediaRecorder.stop()
+        if (this.vad) {
+            this.vad.destroy()
+            this.vad = null
         }
-        this.mediaRecorder = null
-        if (this.micStream) {
-            this.micStream.getTracks().forEach((t) => t.stop())
-            this.micStream = null
-        }
-        if (this.audioContext) {
-            this.audioContext.close()
-            this.audioContext = null
-        }
-        this.audioChunks = []
     }
 }

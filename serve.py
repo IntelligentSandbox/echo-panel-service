@@ -4,7 +4,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 # serves the electron renderer as a plain browser app
 PORT = 47105
-DIRECTORY = os.path.join(os.path.dirname(os.path.abspath(__file__)), "src")
+DIRECTORY = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dist")
 
 if __name__ == "__main__":
     handler = partial(SimpleHTTPRequestHandler, directory=DIRECTORY)

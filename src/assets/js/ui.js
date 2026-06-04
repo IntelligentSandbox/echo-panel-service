@@ -107,6 +107,16 @@ export class StatusUI {
         if (!btn) return
         btn.classList.toggle('active', isActive)
         btn.classList.toggle('stopping', isActive)
+        if (!isActive) btn.classList.remove('speaking')
+    }
+
+    updateMicSpeaking(isSpeaking) {
+        const btn = document.getElementById('microphone-chat-button')
+        if (!btn) return
+        btn.classList.toggle(
+            'speaking',
+            isSpeaking && btn.classList.contains('active')
+        )
     }
 
     initMicButtonHover() {

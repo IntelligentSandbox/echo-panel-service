@@ -15,6 +15,14 @@ const connection = new Connect()
 const continuousListener = new ContinuousListener()
 
 let currentState = { expression: 'neutral', state: 'idle', isSpeaking: false }
+let micVoiceActive = false
+
+// green while local mic has voice, gated on the avatar being in listening state
+function refreshMicSpeaking() {
+    status.updateMicSpeaking(
+        micVoiceActive && currentState.state === 'listening'
+    )
+}
 
 // turns raw millisecond timings into a short human label
 function fmtMs(ms) {
@@ -69,6 +77,7 @@ function handleMessage(msg) {
         case 'state':
             currentState.state = msg.data.state
             status.updateState(msg.data.state)
+            refreshMicSpeaking()
             break
         case 'speak_start':
             currentState.isSpeaking = true
@@ -170,7 +179,7 @@ async function sendStreamingVoice(blob) {
     logs.log(`Sending voice clip (${blob.size} bytes)`, 'debug')
     try {
         const formData = new FormData()
-        formData.append('audio', blob, 'recording.webm')
+        formData.append('audio', blob, 'recording.wav')
         const res = await fetch(API('/chat/voice/stream'), {
             method: 'POST',
             body: formData,
@@ -193,6 +202,7 @@ async function sendStreamingVoice(blob) {
 async function toggleMicrophoneListening() {
     if (continuousListener.isListening) {
         continuousListener.stop()
+        micVoiceActive = false
         status.updateMicButton(false)
         connection.sendAction('set_state', { state: 'idle' })
         logs.log('Stopped listening', 'event')
@@ -232,7 +242,10 @@ async function setProfanityFilterEnabled(enabled) {
         })
         const data = await res.json()
         if (isError(res, data)) {
-            logs.log(`Content mode error [${data.code}]: ${errText(data)}`, 'error')
+            logs.log(
+                `Content mode error [${data.code}]: ${errText(data)}`,
+                'error'
+            )
             return
         }
         updateContentModeUI(data.content_mode)
@@ -340,7 +353,8 @@ async function playSound(name) {
             body: JSON.stringify({ sound_name: name }),
         })
         const data = await res.json()
-        if (isError(res, data)) logs.log(`Sound error [${data.code}]: ${errText(data)}`, 'error')
+        if (isError(res, data))
+            logs.log(`Sound error [${data.code}]: ${errText(data)}`, 'error')
         else logs.log(`Playing sound: ${name}`, 'event')
     } catch (e) {
         logs.log(`Sound error: ${e.message}`, 'error')
@@ -397,6 +411,9 @@ function wireChatControls() {
     continuousListener.onSpeechStart = () => {
         logs.log('Speech detected', 'debug')
         connection.sendAction('set_state', { state: 'listening' })
+        micVoiceActive = true
+        currentState.state = 'listening'
+        refreshMicSpeaking()
         // if the avatar is talking, cut it off
         if (currentState.isSpeaking) {
             connection.sendAction('set_state', { state: 'idle' })
@@ -406,9 +423,12 @@ function wireChatControls() {
     continuousListener.onSpeechEnd = () => {
         logs.log('Speech ended', 'debug')
         connection.sendAction('set_state', { state: 'idle' })
+        micVoiceActive = false
+        refreshMicSpeaking()
     }
     continuousListener.onAudioReady = (blob) => sendStreamingVoice(blob)
     continuousListener.onError = (e) => {
+        micVoiceActive = false
         status.updateMicButton(false)
         chat.addMessage(`Microphone error: ${e.message}`, 'system')
         logs.log(`Microphone error: ${e.name} - ${e.message}`, 'error')
@@ -461,7 +481,8 @@ function wireLogControls() {
     const logButtons = document.querySelectorAll('.log-controls-bar button')
     if (logButtons[0])
         logButtons[0].addEventListener('click', () => logs.toggleDebug())
-    if (logButtons[1]) logButtons[1].addEventListener('click', () => logs.clear())
+    if (logButtons[1])
+        logButtons[1].addEventListener('click', () => logs.clear())
 }
 
 document.addEventListener('DOMContentLoaded', () => {

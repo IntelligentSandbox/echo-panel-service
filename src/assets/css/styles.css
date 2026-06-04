@@ -15,6 +15,7 @@
     --status-color-warning: #fbbf24;
     --status-color-info: #3b82f6;
     --microphone-active-color: rgba(88, 152, 255, 0.1);
+    --microphone-speaking-color: rgba(64, 200, 120, 0.15);
 }
 
 * {
@@ -233,7 +234,6 @@ body {
 }
 
 @keyframes pulse-mic {
-
     0%,
     100% {
         opacity: 1;
@@ -246,6 +246,14 @@ body {
 
 #microphone-chat-button.active svg {
     fill: rgba(88, 152, 255, 0.85);
+}
+
+#microphone-chat-button.active.speaking {
+    background-color: var(--microphone-speaking-color);
+}
+
+#microphone-chat-button.active.speaking svg {
+    fill: rgba(64, 200, 120, 0.9);
 }
 
 #microphone-chat-button.active .icon-stop {

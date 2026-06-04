@@ -8,7 +8,9 @@ function timezoneOptions() {
     try {
         return Intl.supportedValuesOf('timeZone')
     } catch {
-        return [Intl.DateTimeFormat().resolvedOptions().timeZone].filter(Boolean)
+        return [Intl.DateTimeFormat().resolvedOptions().timeZone].filter(
+            Boolean
+        )
     }
 }
 
@@ -130,7 +132,9 @@ export class MemoryUI {
         container.innerHTML = '<div class="empty-state">Loading...</div>'
         try {
             const data = await (
-                await fetch(`${this.apiUrl}/conversation/recent?limit=20&gap_minutes=30`)
+                await fetch(
+                    `${this.apiUrl}/conversation/recent?limit=20&gap_minutes=30`
+                )
             ).json()
             const messages = data.messages || data.conversation || []
             if (!messages.length) {

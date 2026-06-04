@@ -18,9 +18,9 @@ function createWindow() {
     });
 
     win.setAlwaysOnTop(true, "floating");
-    win.loadFile(join(__dirname, "src/index.html"));
+    win.loadFile(join(__dirname, "dist/index.html"));
 
-    watch(join(__dirname, "src"), { recursive: true }, () => {
+    watch(join(__dirname, "dist"), { recursive: true }, () => {
         win.webContents.reload();
     });
 }
