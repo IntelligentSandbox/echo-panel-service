@@ -16,12 +16,14 @@ const continuousListener = new ContinuousListener()
 
 let currentState = { expression: 'neutral', state: 'idle', isSpeaking: false }
 
+// turns raw millisecond timings into a short human label
 function fmtMs(ms) {
     if (ms == null) return '-'
     if (ms >= 1000) return `${(ms / 1000).toFixed(1)}s`
     return `${Math.round(ms)}ms`
 }
 
+// friendly labels per error code, falls back to the server message
 const ERROR_LABELS = {
     tts_auth: 'Voice auth failed. Check the TTS API key.',
     tts_unavailable: 'Voice service is unavailable.',
@@ -31,11 +33,13 @@ const ERROR_LABELS = {
     memory_error: 'Memory service failed.',
 }
 
+// pulls a display string from a structured {code, message} payload
 function errText(data) {
     if (!data) return 'Unknown error'
     return ERROR_LABELS[data.code] || data.message || 'Unknown error'
 }
 
+// true when a response carries a structured error
 function isError(res, data) {
     return !res.ok || !!(data && data.code)
 }
@@ -161,6 +165,7 @@ async function sendChatMessage() {
     }
 }
 
+// reply comes back over the socket so we only show the user side here
 async function sendStreamingVoice(blob) {
     logs.log(`Sending voice clip (${blob.size} bytes)`, 'debug')
     try {
@@ -201,43 +206,171 @@ async function toggleMicrophoneListening() {
 }
 
 function setAvatarExpression(expression) {
+    connection.sendAction('set_expression', { expression })
     status.updateExpression(expression)
+    currentState.expression = expression
+    logs.log(`Expression: ${expression}`, 'debug')
 }
 
 function setAvatarState(state) {
+    connection.sendAction('set_state', { state })
     status.updateState(state)
+    currentState.state = state
+    logs.log(`State: ${state}`, 'debug')
 }
 
-function setProfanityFilterEnabled(enabled) {
-    status.setProfanityFilter(enabled)
+function setAvatarTexture(texture) {
+    connection.sendAction('set_texture', { texture })
+    logs.log(`Color: ${texture}`, 'debug')
 }
 
-function clearChatMessages() {}
+async function setProfanityFilterEnabled(enabled) {
+    const mode = enabled ? 'filtered' : 'unfiltered'
+    try {
+        const res = await fetch(API(`/content-mode/${mode}`), {
+            method: 'POST',
+        })
+        const data = await res.json()
+        if (isError(res, data)) {
+            logs.log(`Content mode error [${data.code}]: ${errText(data)}`, 'error')
+            return
+        }
+        updateContentModeUI(data.content_mode)
+        logs.log(`Content mode: ${data.content_mode}`, 'event')
+    } catch (e) {
+        logs.log(`Content mode error: ${e.message}`, 'error')
+    }
+}
 
-function clearMemoryAndHistory() {}
+function updateContentModeUI(mode) {
+    status.setProfanityFilter(mode === 'filtered')
+}
 
+async function clearConversationAndHistory() {
+    try {
+        await fetch(API('/chat/clear'), { method: 'POST' })
+        chat.clear()
+        memory.updateStatsDisplay()
+        logs.log('Conversation and memory cleared', 'event')
+    } catch (e) {
+        chat.addMessage(`Error: ${e.message}`, 'system')
+        logs.log(`Clear error: ${e.message}`, 'error')
+    }
+}
+
+async function updatePerformanceStats() {
+    try {
+        const data = await (await fetch(API('/performance'))).json()
+        status.updatePerformance({
+            last: fmtMs(data.last_total_ms),
+            avg: fmtMs(data.avg_total_ms),
+            llm: fmtMs(data.last_llm_ms),
+            tts: fmtMs(data.last_tts_ms),
+        })
+    } catch (e) {
+        /* ignore */
+    }
+    updateContextUsage()
+}
+
+async function updateContextUsage() {
+    try {
+        const data = await (await fetch(API('/usage'))).json()
+        status.updateContextUsage(data)
+    } catch (e) {
+        /* ignore */
+    }
+}
+
+// TODO: POST /donations/test with donor name, amount, and message from form inputs
+function sendTestDonation() {
+    logs.log('Donations not implemented yet', 'warn')
+}
+
+// TODO: POST /discord/join or /discord/leave using the channel name input
 function toggleDiscordVoiceChannel() {
-    integrations.toggleDiscordButton()
+    logs.log('Discord not implemented yet', 'warn')
 }
 
-function sendTestDonation() {}
+async function refreshSoundEffects() {
+    const listEl = document.getElementById('sounds-list')
+    try {
+        const data = await (await fetch(API('/sounds'))).json()
+        const names = Object.keys(data.index || {})
+        const aliases = Object.keys(data.aliases || {})
+        integrations.updateSounds({
+            count: names.length,
+            aliases: aliases.length,
+        })
+        renderSoundList(listEl, names)
+    } catch (e) {
+        if (listEl) {
+            listEl.innerHTML =
+                '<div class="loading-sound-text">Error loading sounds</div>'
+        }
+    }
+}
 
-function refreshSoundEffects() {}
+function renderSoundList(container, names) {
+    if (!container) return
+    if (!names.length) {
+        container.innerHTML =
+            '<div class="loading-sound-text">No sounds found.</div>'
+        return
+    }
+    const wrap = document.createElement('div')
+    wrap.className = 'sound-chip-list'
+    for (const name of names) {
+        const chip = document.createElement('button')
+        chip.className = 'sound-chip'
+        chip.textContent = name
+        chip.title = 'Click to play'
+        chip.addEventListener('click', () => playSound(name))
+        wrap.appendChild(chip)
+    }
+    container.replaceChildren(wrap)
+}
+
+async function playSound(name) {
+    if (!name) return
+    try {
+        const res = await fetch(API('/sounds/play'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sound_name: name }),
+        })
+        const data = await res.json()
+        if (isError(res, data)) logs.log(`Sound error [${data.code}]: ${errText(data)}`, 'error')
+        else logs.log(`Playing sound: ${name}`, 'event')
+    } catch (e) {
+        logs.log(`Sound error: ${e.message}`, 'error')
+    }
+}
 
 function playSoundEffect() {
     const name = document.getElementById('sound-test-name').value.trim()
     if (!name) return
+    playSound(name)
 }
 
-function clearLogMessages() {}
-
-function toggleDebugLogging() {}
+function refreshTab(tab) {
+    if (tab === 'controls') updatePerformanceStats()
+    else if (tab === 'integrations') {
+        refreshSoundEffects()
+        // TODO: fetch and display twitch, discord, and donation status
+    } else if (tab === 'memory') {
+        memory.updateStatsDisplay()
+        memory.renderSubTab()
+    }
+}
 
 function wirePanelTabs() {
     document.querySelectorAll('.panel-tab').forEach((tab) => {
-        tab.addEventListener('click', () =>
-            panel.switchTab(tab.id.replace('panel-', ''))
-        )
+        tab.addEventListener('click', () => {
+            const name = tab.id.replace('panel-', '')
+            panel.switchTab(name)
+            refreshTab(name)
+        })
     })
 }
 
@@ -252,7 +385,7 @@ function wireMemorySubTabs() {
 function wireChatControls() {
     document
         .getElementById('microphone-chat-button')
-        .addEventListener('click', toggleMicrophoneRecording)
+        .addEventListener('click', toggleMicrophoneListening)
     document
         .getElementById('send-chat-button')
         .addEventListener('click', sendChatMessage)
@@ -260,12 +393,37 @@ function wireChatControls() {
         if (e.key === 'Enter') sendChatMessage()
     })
     status.initMicButtonHover()
+
+    continuousListener.onSpeechStart = () => {
+        logs.log('Speech detected', 'debug')
+        connection.sendAction('set_state', { state: 'listening' })
+        // if the avatar is talking, cut it off
+        if (currentState.isSpeaking) {
+            connection.sendAction('set_state', { state: 'idle' })
+            fetch(API('/interrupt'), { method: 'POST' }).catch(() => {})
+        }
+    }
+    continuousListener.onSpeechEnd = () => {
+        logs.log('Speech ended', 'debug')
+        connection.sendAction('set_state', { state: 'idle' })
+    }
+    continuousListener.onAudioReady = (blob) => sendStreamingVoice(blob)
+    continuousListener.onError = (e) => {
+        status.updateMicButton(false)
+        chat.addMessage(`Microphone error: ${e.message}`, 'system')
+        logs.log(`Microphone error: ${e.name} - ${e.message}`, 'error')
+    }
 }
 
 function wireControlButtons() {
     getControlGroupButtons('Expression').forEach((btn) => {
         btn.addEventListener('click', () =>
             setAvatarExpression(btn.textContent.trim().toLowerCase())
+        )
+    })
+    getControlGroupButtons('Color').forEach((btn) => {
+        btn.addEventListener('click', () =>
+            setAvatarTexture(btn.textContent.trim().toLowerCase())
         )
     })
     getControlGroupButtons('State').forEach((btn) => {
@@ -281,8 +439,9 @@ function wireControlButtons() {
         .getElementById('mode-unfiltered')
         .addEventListener('click', () => setProfanityFilterEnabled(false))
 
-    const actions = getControlGroupButtons('Actions')
-    if (actions[0]) actions[0].addEventListener('click', clearChatMessages)
+    const actions = getControlGroupButtons('History')
+    if (actions[0])
+        actions[0].addEventListener('click', clearConversationAndHistory)
 }
 
 function wireIntegrationControls() {
@@ -301,8 +460,8 @@ function wireIntegrationControls() {
 function wireLogControls() {
     const logButtons = document.querySelectorAll('.log-controls-bar button')
     if (logButtons[0])
-        logButtons[0].addEventListener('click', toggleDebugLogging)
-    if (logButtons[1]) logButtons[1].addEventListener('click', clearLogMessages)
+        logButtons[0].addEventListener('click', () => logs.toggleDebug())
+    if (logButtons[1]) logButtons[1].addEventListener('click', () => logs.clear())
 }
 
 document.addEventListener('DOMContentLoaded', () => {
