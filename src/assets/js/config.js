@@ -1,5 +1,6 @@
-const AVATAR_URL = 'localhost:47103'
-const MEMORY_URL = 'localhost:47104'
+const host = window.location.hostname
+const AVATAR_URL = `${host}:47103`
+const MEMORY_URL = `${host}:47104`
 
 export const CONFIG = {
     wsUrl: `ws://${AVATAR_URL}/ws`,
