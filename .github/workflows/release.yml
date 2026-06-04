@@ -31,7 +31,7 @@ jobs:
         run: npm ci
 
       - name: Build and package
-        run: npm run build && npm run pack -- --${{ matrix.platform }}
+        run: npm run build && npm run pack -- --${{ matrix.platform }} --publish never
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
