@@ -1,6 +1,6 @@
-import { PanelUI, StatusUI, IntegrationsUI } from './ui.js'
+import { PanelUI, StatusUI, IntegrationsUI, ChatUI, LogUI } from './ui.js'
 import { MemoryUI } from './memory.js'
-import { Connect } from './connect.js'
+import { Connect, ContinuousListener } from './connect.js'
 import { CONFIG } from './config.js'
 
 const API = (path) => `${CONFIG.apiUrl}${path}`
@@ -8,7 +8,37 @@ const API = (path) => `${CONFIG.apiUrl}${path}`
 const panel = new PanelUI()
 const status = new StatusUI()
 const integrations = new IntegrationsUI()
+const chat = new ChatUI()
+const logs = new LogUI()
 const memory = new MemoryUI()
+const connection = new Connect()
+const continuousListener = new ContinuousListener()
+
+let currentState = { expression: 'neutral', state: 'idle', isSpeaking: false }
+
+function fmtMs(ms) {
+    if (ms == null) return '-'
+    if (ms >= 1000) return `${(ms / 1000).toFixed(1)}s`
+    return `${Math.round(ms)}ms`
+}
+
+const ERROR_LABELS = {
+    tts_auth: 'Voice auth failed. Check the TTS API key.',
+    tts_unavailable: 'Voice service is unavailable.',
+    llm_error: 'Language model request failed.',
+    llm_rate_limited: 'Rate limited. Wait a minute or switch to Ollama.',
+    stt_error: 'Could not transcribe audio.',
+    memory_error: 'Memory service failed.',
+}
+
+function errText(data) {
+    if (!data) return 'Unknown error'
+    return ERROR_LABELS[data.code] || data.message || 'Unknown error'
+}
+
+function isError(res, data) {
+    return !res.ok || !!(data && data.code)
+}
 
 // finds the buttons inside a control group by its visible label
 function getControlGroupButtons(label) {
@@ -22,17 +52,152 @@ function getControlGroupButtons(label) {
     return []
 }
 
-// action handlers, wired to the backend later
-function sendChatMessage() {
-    const input = document.getElementById('chat-input')
-    const text = input.value.trim()
-    if (!text) return
-    input.value = ''
+function handleMessage(msg) {
+    logs.log(`< ${msg.type}: ${JSON.stringify(msg.data ?? {})}`, 'debug')
+    switch (msg.type) {
+        case 'state_update':
+            handleStateUpdate(msg.data)
+            break
+        case 'expression':
+            currentState.expression = msg.data.expression
+            status.updateExpression(msg.data.expression)
+            break
+        case 'state':
+            currentState.state = msg.data.state
+            status.updateState(msg.data.state)
+            break
+        case 'speak_start':
+            currentState.isSpeaking = true
+            status.updateSpeech(true)
+            break
+        case 'speak_stop':
+            currentState.isSpeaking = false
+            status.updateSpeech(false)
+            break
+        case 'content_mode':
+            updateContentModeUI(msg.data.content_mode)
+            break
+        case 'transcription':
+            handleTranscription(msg.data)
+            break
+        case 'chat_message':
+            handleChatMessage(msg.data)
+            break
+        case 'external_message':
+            handleExternalMessage(msg.data)
+            break
+        case 'wake_command':
+            logs.log(`Wake command: ${msg.data.command}`, 'event')
+            break
+        case 'error':
+            chat.removeProcessingMessage()
+            chat.addMessage(errText(msg.data), 'system')
+            logs.log(`Error [${msg.data?.code}]: ${errText(msg.data)}`, 'error')
+            break
+    }
 }
 
-function toggleMicrophoneRecording() {
-    const btn = document.getElementById('microphone-chat-button')
-    status.updateMicButton(!btn.classList.contains('active'))
+function handleStateUpdate(data) {
+    currentState.expression = data.expression || 'neutral'
+    currentState.state = data.state || 'idle'
+    currentState.isSpeaking = !!data.is_speaking
+    status.updateExpression(currentState.expression)
+    status.updateState(currentState.state)
+    status.updateSpeech(currentState.isSpeaking)
+    if (data.content_mode) updateContentModeUI(data.content_mode)
+}
+
+function handleTranscription(data) {
+    if (!data.text?.trim()) return
+    if (data.final) chat.removeInterimTranscription()
+    else chat.showInterimTranscription(data.text)
+}
+
+function handleChatMessage(data) {
+    chat.removeInterimTranscription()
+    chat.removeProcessingMessage()
+    if (data.response?.trim()) chat.addMessage(data.response, 'assistant')
+}
+
+function handleExternalMessage(data) {
+    if (data.message?.trim()) {
+        chat.addMessage(data.message, 'user', {
+            source: data.source || 'external',
+            username: data.username || 'anonymous',
+            color: data.metadata?.color || '',
+        })
+    }
+}
+
+async function sendChatMessage() {
+    const message = chat.getInputValue()
+    if (!message) return
+    chat.addMessage(message, 'user')
+    chat.setInputDisabled(true)
+    chat.addMessage('Thinking...', 'system')
+    try {
+        const res = await fetch(API('/chat'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message }),
+        })
+        const data = await res.json()
+        chat.removeProcessingMessage()
+        if (isError(res, data)) {
+            chat.addMessage(errText(data), 'system')
+            logs.log(`Chat error [${data.code}]: ${errText(data)}`, 'error')
+            return
+        }
+        chat.addMessage(data.response, 'assistant')
+        memory.updateStatsDisplay()
+        updatePerformanceStats()
+    } catch (e) {
+        chat.removeProcessingMessage()
+        chat.addMessage(`Error: ${e.message}`, 'system')
+        logs.log(`Chat error: ${e.message}`, 'error')
+    } finally {
+        chat.setInputDisabled(false)
+        chat.focusInput()
+    }
+}
+
+async function sendStreamingVoice(blob) {
+    logs.log(`Sending voice clip (${blob.size} bytes)`, 'debug')
+    try {
+        const formData = new FormData()
+        formData.append('audio', blob, 'recording.webm')
+        const res = await fetch(API('/chat/voice/stream'), {
+            method: 'POST',
+            body: formData,
+        })
+        const data = await res.json()
+        logs.log(`Voice stream: ${JSON.stringify(data)}`, 'debug')
+        if (isError(res, data)) {
+            chat.addMessage(errText(data), 'system')
+        } else if (data.queued) {
+            chat.addMessage(`[queued] ${data.transcribed}`, 'user')
+        } else if (data.transcribed?.trim()) {
+            chat.addMessage(data.transcribed, 'user')
+        }
+    } catch (e) {
+        chat.addMessage(`Error: ${e.message}`, 'system')
+        logs.log(`Voice error: ${e.message}`, 'error')
+    }
+}
+
+async function toggleMicrophoneListening() {
+    if (continuousListener.isListening) {
+        continuousListener.stop()
+        status.updateMicButton(false)
+        connection.sendAction('set_state', { state: 'idle' })
+        logs.log('Stopped listening', 'event')
+        return
+    }
+    logs.log('Requesting microphone...', 'debug')
+    if (await continuousListener.start()) {
+        status.updateMicButton(true)
+        logs.log('Listening - just talk', 'event')
+    }
 }
 
 function setAvatarExpression(expression) {
@@ -152,9 +317,19 @@ document.addEventListener('DOMContentLoaded', () => {
     integrations.setDefaults()
     memory.setDefaults()
 
-    const connect = new Connect()
-    connect.addEventListener('status-change', (e) => {
+    memory.onMessage = (text, level) => logs.log(text, level)
+
+    connection.addEventListener('status-change', (e) => {
         status.updateConnection(e.detail.status, e.detail.isError)
+        logs.log(
+            `Connection: ${e.detail.status}`,
+            e.detail.isError ? 'warn' : 'event'
+        )
     })
-    connect.connect()
+    connection.addEventListener('message', (e) => handleMessage(e.detail))
+    connection.connect()
+})
+
+window.addEventListener('beforeunload', () => {
+    if (continuousListener.isListening) continuousListener.stop()
 })
