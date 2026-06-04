@@ -2,6 +2,8 @@ import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 
+const p = (...args) => resolve(__dirname, ...args).replaceAll('\\', '/')
+
 // silero model + worklet and the onnxruntime wasm must sit at the served root
 // so MicVAD can fetch them via baseAssetPath/onnxWASMBasePath
 export default defineConfig({
@@ -18,24 +20,15 @@ export default defineConfig({
         viteStaticCopy({
             targets: [
                 {
-                    src: resolve(
-                        __dirname,
-                        'node_modules/@ricky0123/vad-web/dist/*.onnx'
-                    ),
+                    src: p('node_modules/@ricky0123/vad-web/dist/*.onnx'),
                     dest: '',
                 },
                 {
-                    src: resolve(
-                        __dirname,
-                        'node_modules/@ricky0123/vad-web/dist/vad.worklet.bundle.min.js'
-                    ),
+                    src: p('node_modules/@ricky0123/vad-web/dist/vad.worklet.bundle.min.js'),
                     dest: '',
                 },
                 {
-                    src: resolve(
-                        __dirname,
-                        'node_modules/onnxruntime-web/dist/*.wasm'
-                    ),
+                    src: p('node_modules/onnxruntime-web/dist/*.wasm'),
                     dest: '',
                 },
             ],
