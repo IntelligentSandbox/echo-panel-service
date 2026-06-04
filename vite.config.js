@@ -8,6 +8,7 @@ const p = (...args) => resolve(__dirname, ...args).replaceAll('\\', '/')
 // so MicVAD can fetch them via baseAssetPath/onnxWASMBasePath
 export default defineConfig({
     root: 'src',
+    base: './',
     server: {
         host: true,
         port: 47105,
