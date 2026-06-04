@@ -3,6 +3,19 @@ const setText = (id, value) => {
     if (el) el.textContent = value
 }
 
+const setStatus = (id, value, color) => {
+    const el = document.getElementById(id)
+    if (!el) return
+    el.textContent = value
+    if (color) el.style.color = color
+}
+
+const COLOR = {
+    ok: 'var(--status-color-ok)',
+    error: 'var(--status-color-error)',
+    muted: 'var(--text-muted)',
+}
+
 export class PanelUI {
     constructor() {
         this.currentTab = 'chat'
@@ -68,6 +81,18 @@ export class StatusUI {
         setText('perf-tts-time', tts ?? '-')
     }
 
+    updateContextUsage({ prompt_tokens, context_window, percent_used } = {}) {
+        if (!prompt_tokens || !context_window) {
+            setText('chat-context', '')
+            return
+        }
+        const pct = percent_used != null ? `${percent_used}% · ` : ''
+        setText(
+            'chat-context',
+            `${pct}${prompt_tokens.toLocaleString()} / ${context_window.toLocaleString()} tokens`
+        )
+    }
+
     setProfanityFilter(enabled) {
         document
             .getElementById('mode-filtered')
@@ -98,43 +123,177 @@ export class StatusUI {
         this.updateExpression('neutral')
         this.updateSpeech(false)
         this.updatePerformance()
+        this.updateContextUsage()
         this.setProfanityFilter(true)
     }
 }
 
+export class ChatUI {
+    constructor() {
+        this.messagesContainer = document.getElementById('chat-messages')
+    }
+
+    addMessage(text, type = 'user', options = {}) {
+        if (!this.messagesContainer) return
+        const msg = document.createElement('div')
+        msg.className = `chat-message ${type}`
+
+        // external sources get a colored badge and username
+        if (options.source && options.source !== 'local') {
+            msg.classList.add(`source-${options.source}`)
+            if (options.username) {
+                const badge = document.createElement('span')
+                badge.className = `source-badge ${options.source}`
+                badge.textContent =
+                    options.source.charAt(0).toUpperCase() +
+                    options.source.slice(1)
+                msg.appendChild(badge)
+
+                const username = document.createElement('span')
+                username.className = 'chat-username'
+                username.textContent = options.username + ': '
+                if (options.color) username.style.color = options.color
+                msg.appendChild(username)
+            }
+        }
+
+        const textSpan = document.createElement('span')
+        textSpan.className = 'chat-text'
+        textSpan.textContent = text
+        msg.appendChild(textSpan)
+
+        this.messagesContainer.appendChild(msg)
+        this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight
+    }
+
+    addTwitchMessage(username, message, badges = [], color = '') {
+        this.addMessage(message, 'user', {
+            source: 'twitch',
+            username,
+            color: color || '#9147ff',
+            badges,
+        })
+    }
+
+    showInterimTranscription(text) {
+        if (!this.messagesContainer) return
+        let interim = this.messagesContainer.querySelector(
+            '.chat-message.interim'
+        )
+        if (!interim) {
+            interim = document.createElement('div')
+            interim.className = 'chat-message user interim'
+            this.messagesContainer.appendChild(interim)
+        }
+        interim.textContent = text + '...'
+        this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight
+    }
+
+    removeInterimTranscription() {
+        this.messagesContainer?.querySelector('.chat-message.interim')?.remove()
+    }
+
+    // drops the trailing "Thinking..."/"Processing..." placeholder
+    removeProcessingMessage() {
+        const last = this.messagesContainer?.lastElementChild
+        if (
+            last?.classList.contains('system') &&
+            (last.textContent.includes('Processing') ||
+                last.textContent.includes('Thinking'))
+        ) {
+            last.remove()
+        }
+    }
+
+    clear() {
+        if (this.messagesContainer) {
+            this.messagesContainer.innerHTML =
+                '<div class="chat-message reminder"><p>Click on the microphone or type a message.</p></div>'
+        }
+    }
+
+    getInputValue() {
+        const input = document.getElementById('chat-input')
+        if (!input) return ''
+        const value = input.value.trim()
+        input.value = ''
+        return value
+    }
+
+    setInputDisabled(disabled) {
+        const input = document.getElementById('chat-input')
+        const sendBtn = document.getElementById('send-chat-button')
+        if (input) input.disabled = disabled
+        if (sendBtn) sendBtn.disabled = disabled
+    }
+
+    focusInput() {
+        document.getElementById('chat-input')?.focus()
+    }
+}
+
 export class IntegrationsUI {
-    updateTwitch({ status = 'Disconnected', channel = '-' } = {}) {
-        setText('twitch-connection', status)
-        setText('twitch-channel', channel)
-    }
-
-    updateDiscord({ status = 'Disconnected', voice = '-' } = {}) {
-        setText('discord-connection', status)
-        setText('discord-voice', voice)
-    }
-
-    updateDonation({ status = 'Disabled', queue = '0' } = {}) {
-        setText('donation-enabled', status)
-        setText('donation-queue', queue)
-    }
-
+    // TODO: add updateTwitch({ status, channel }) method
+    // TODO: add updateDiscord({ status, voiceChannel }) method
+    // TODO: add updateDonation({ enabled, queue }) method
     updateSounds({ count = '-', aliases = '-' } = {}) {
         setText('sounds-count', count)
         setText('sounds-aliases', aliases)
     }
 
-    // flips the join button between its two labels
-    toggleDiscordButton() {
-        const btn = document.getElementById('discord-vc-btn')
-        const leaving = btn.classList.toggle('leaving')
-        btn.textContent = leaving ? 'Leave' : 'Join'
-        return leaving
+    setDefaults() {
+        this.updateSounds()
+    }
+}
+
+export class LogUI {
+    constructor() {
+        this.container = document.getElementById('log-messages')
+        this.debug = false
     }
 
-    setDefaults() {
-        this.updateTwitch()
-        this.updateDiscord()
-        this.updateDonation()
-        this.updateSounds()
+    log(message, level = 'info') {
+        if (level === 'debug' && !this.debug) return
+        if (!this.container) return
+
+        const entry = document.createElement('div')
+        entry.className = 'log-entry'
+
+        const time = document.createElement('span')
+        time.className = 'log-time'
+        const d = new Date()
+        time.textContent =
+            d.toLocaleDateString('en-US', {
+                month: '2-digit',
+                day: '2-digit',
+            }) +
+            ' ' +
+            d.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                second: '2-digit',
+            })
+
+        const lvl = document.createElement('span')
+        lvl.className = `log-level ${level}`
+        lvl.textContent = level
+
+        const msg = document.createElement('span')
+        msg.className = 'log-msg'
+        msg.textContent = message
+
+        entry.append(time, lvl, msg)
+        this.container.appendChild(entry)
+        this.container.scrollTop = this.container.scrollHeight
+    }
+
+    clear() {
+        if (this.container) this.container.innerHTML = ''
+    }
+
+    toggleDebug() {
+        this.debug = !this.debug
+        this.log(`Debug logging ${this.debug ? 'on' : 'off'}`, 'event')
+        return this.debug
     }
 }
