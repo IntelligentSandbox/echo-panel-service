@@ -26,10 +26,12 @@
   "build": {
     "appId": "com.echo.panel",
     "productName": "Echo Panel",
+    "icon": "icon.png",
     "files": [
       "main.js",
       "dist/**",
-      "package.json"
+      "package.json",
+      "icon.png"
     ],
     "directories": {
       "output": "release"
