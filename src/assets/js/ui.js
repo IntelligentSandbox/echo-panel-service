@@ -74,11 +74,12 @@ export class StatusUI {
             : 'No'
     }
 
-    updatePerformance({ last, avg, llm, tts } = {}) {
+    updatePerformance({ last, avg, llm, tts, firstAudio } = {}) {
         setText('perf-last-time', last ?? '-')
         setText('perf-avg-time', avg ?? '-')
         setText('perf-llm-time', llm ?? '-')
         setText('perf-tts-time', tts ?? '-')
+        setText('perf-first-audio-time', firstAudio ?? '-')
     }
 
     updateContextUsage({ prompt_tokens, context_window, percent_used } = {}) {

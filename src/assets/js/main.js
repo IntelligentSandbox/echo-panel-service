@@ -292,6 +292,7 @@ async function updatePerformanceStats() {
             avg: fmtMs(data.avg_total_ms),
             llm: fmtMs(data.last_llm_ms),
             tts: fmtMs(data.last_tts_ms),
+            firstAudio: fmtMs(data.last_first_audio_ms),
         })
     } catch (e) {
         /* ignore */
