@@ -222,6 +222,16 @@ export class ChatUI {
         }
     }
 
+    restore(messages) {
+        if (!this.messagesContainer) return
+        this.messagesContainer.querySelector('.chat-message.reminder')?.remove()
+        for (const m of messages) {
+            if (m.user_message) this.addMessage(m.user_message, 'user')
+            if (m.assistant_response)
+                this.addMessage(m.assistant_response, 'assistant')
+        }
+    }
+
     getInputValue() {
         const input = document.getElementById('chat-input')
         if (!input) return ''

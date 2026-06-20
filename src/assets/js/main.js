@@ -271,6 +271,19 @@ async function clearConversationAndHistory() {
     }
 }
 
+async function restoreConversation() {
+    try {
+        const res = await fetch(
+            `${CONFIG.memoryApiUrl}/conversation/recent?limit=20&gap_minutes=30`
+        )
+        const data = await res.json()
+        const messages = data.messages || data.conversation || []
+        if (messages.length) chat.restore(messages)
+    } catch (e) {
+        /* ignore */
+    }
+}
+
 async function updatePerformanceStats() {
     try {
         const data = await (await fetch(API('/performance'))).json()
@@ -508,6 +521,8 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     connection.addEventListener('message', (e) => handleMessage(e.detail))
     connection.connect()
+
+    restoreConversation()
 })
 
 window.addEventListener('beforeunload', () => {
