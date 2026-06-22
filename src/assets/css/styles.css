@@ -50,7 +50,7 @@ body {
 
 .panel-title {
     color: white;
-    font-size: 14px;
+    font-size: 0.875rem;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -107,7 +107,7 @@ body {
     padding: 8px;
     border: none;
     cursor: pointer;
-    font-size: 11px;
+    font-size: 0.6875rem;
     border-bottom: 2px solid transparent;
     background: none;
     color: var(--text-muted);
@@ -126,7 +126,7 @@ body {
 .chat-message.reminder {
     color: var(--text-muted);
     text-align: center;
-    font-size: 11px;
+    font-size: 0.6875rem;
     font-style: italic;
     max-width: 100%;
     background-color: var(--bg-item-muted);
@@ -190,7 +190,7 @@ body {
 
 #chat-context {
     padding: 2px 14px;
-    font-size: 10px;
+    font-size: 0.625rem;
     color: var(--text-muted);
     text-align: right;
 }
@@ -211,7 +211,7 @@ body {
 #chat-input {
     background: var(--border-main);
     color: white;
-    font-size: 12px;
+    font-size: 0.75rem;
     border: none;
     border-radius: 20px;
     padding: 10px 14px;
@@ -286,14 +286,14 @@ body {
 }
 
 .status-label {
-    font-size: 10px;
+    font-size: 0.625rem;
     color: var(--text-muted);
     text-transform: uppercase;
     margin-bottom: 4px;
 }
 
 .status-value {
-    font-size: 14px;
+    font-size: 0.875rem;
     color: white;
     font-weight: 500;
 }
@@ -303,7 +303,7 @@ body {
 }
 
 .control-group-label {
-    font-size: 10px;
+    font-size: 0.625rem;
     color: var(--text-muted);
     text-transform: uppercase;
     margin-bottom: 4px;
@@ -320,7 +320,7 @@ body {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 11px;
+    font-size: 0.6875rem;
     background: var(--bg-item-muted);
     color: white;
     transition: all 0.2s;
@@ -368,7 +368,7 @@ body {
 .discord-channel-name {
     background: var(--bg-item-muted);
     color: white;
-    font-size: 11px;
+    font-size: 0.6875rem;
     border: none;
     border-radius: 4px;
     padding: 8px;
@@ -384,7 +384,7 @@ body {
     flex-shrink: 0;
     color: white;
     cursor: pointer;
-    font-size: 11px;
+    font-size: 0.6875rem;
     background: var(--discord-color);
     transition: all 0.2s;
 }
@@ -415,7 +415,7 @@ body {
     color: white;
     width: 100%;
     margin-bottom: 6px;
-    font-size: 11px;
+    font-size: 0.6875rem;
     border: none;
     border-radius: 4px;
     padding: 8px;
@@ -434,7 +434,7 @@ body {
     border: none;
     border-radius: 4px;
     resize: vertical;
-    font-size: 11px;
+    font-size: 0.6875rem;
     outline: none;
     color: white;
 }
@@ -444,7 +444,7 @@ body {
     padding: 8px;
     border-radius: 4px;
     border: none;
-    font-size: 11px;
+    font-size: 0.6875rem;
     color: white;
     cursor: pointer;
     transition: all 0.2s;
@@ -475,7 +475,7 @@ body {
 
 .loading-sound-text {
     color: var(--text-muted);
-    font-size: 11px;
+    font-size: 0.6875rem;
 }
 
 .sound-test-name {
@@ -485,13 +485,13 @@ body {
     width: 100%;
     border-radius: 4px;
     padding: 6px 8px;
-    font-size: 11px;
+    font-size: 0.6875rem;
     border: none;
     outline: none;
 }
 
 .integration-info {
-    font-size: 10px;
+    font-size: 0.625rem;
     padding: 6px;
     margin-top: 6px;
     color: var(--text-muted);
@@ -522,13 +522,13 @@ code {
 }
 
 .memory-stat-value {
-    font-size: 20px;
+    font-size: 1.25rem;
     color: var(--memory-stat-color);
     font-weight: bold;
 }
 
 .memory-stat-label {
-    font-size: 10px;
+    font-size: 0.625rem;
     color: var(--text-muted);
 }
 
@@ -544,7 +544,7 @@ code {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 10px;
+    font-size: 0.625rem;
     background: var(--bg-item-muted);
     color: var(--text-muted);
     transition: all 0.2s;
@@ -577,7 +577,7 @@ code {
     border: 1px solid var(--border-main);
     border-radius: 4px;
     color: var(--primary);
-    font-size: 11px;
+    font-size: 0.6875rem;
     padding: 6px 8px;
     width: 100%;
     box-sizing: border-box;
@@ -633,7 +633,7 @@ code {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 11px;
+    font-size: 0.6875rem;
     background: var(--bg-item-muted);
     color: white;
     transition: all 0.2s;
@@ -690,7 +690,7 @@ code {
     font-style: italic;
     text-align: center;
     max-width: 100%;
-    font-size: 11px;
+    font-size: 0.6875rem;
 }
 
 .chat-message.interim {
@@ -721,7 +721,7 @@ code {
 
 .source-badge {
     display: inline-block;
-    font-size: 9px;
+    font-size: 0.5625rem;
     font-weight: bold;
     text-transform: uppercase;
     padding: 2px 6px;
@@ -771,7 +771,7 @@ code {
     flex-shrink: 0;
     padding: 2px 5px;
     border-radius: 3px;
-    font-size: 9px;
+    font-size: 0.5625rem;
     font-weight: bold;
     text-transform: uppercase;
     display: inline-flex;
@@ -826,7 +826,7 @@ code {
 
 .memory-type {
     flex-shrink: 0;
-    font-size: 9px;
+    font-size: 0.5625rem;
     text-transform: uppercase;
     color: var(--text-muted);
     background: var(--border-main);
@@ -837,7 +837,7 @@ code {
 .memory-text {
     flex: 1;
     color: white;
-    font-size: 11px;
+    font-size: 0.6875rem;
     word-break: break-word;
 }
 
@@ -847,7 +847,7 @@ code {
     border: none;
     color: var(--text-muted);
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1rem;
     line-height: 1;
 }
 
@@ -869,7 +869,7 @@ code {
 }
 
 .user-info-row label {
-    font-size: 10px;
+    font-size: 0.625rem;
     color: var(--text-muted);
     text-transform: uppercase;
 }
@@ -880,7 +880,7 @@ code {
     border: 1px solid var(--border-main);
     border-radius: 4px;
     color: var(--primary);
-    font-size: 11px;
+    font-size: 0.6875rem;
     padding: 6px 8px;
     outline: none;
     width: 100%;
@@ -916,7 +916,7 @@ code {
 
 .sound-chip {
     padding: 2px 6px;
-    font-size: 10px;
+    font-size: 0.625rem;
     background: var(--border-main);
     border: none;
     border-radius: 3px;
