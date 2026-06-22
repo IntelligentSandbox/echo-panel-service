@@ -281,7 +281,7 @@ async function clearConversationAndHistory() {
 async function restoreConversation() {
     try {
         const res = await fetch(
-            `${CONFIG.memoryApiUrl}/conversation/recent?limit=20&gap_minutes=30`
+            `${CONFIG.memoryApiUrl}/conversation/recent?limit=20`
         )
         const data = await res.json()
         const messages = data.messages || data.conversation || []
