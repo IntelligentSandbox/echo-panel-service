@@ -1,7 +1,9 @@
 import { CONFIG } from './config.js'
+import { confirmModal } from './modal.js'
 
 const USER_FIELDS = ['name', 'nickname', 'timezone', 'interests']
 const REQUIRED_USER_FIELDS = ['name']
+const CONVO_PAGE_SIZE = 10
 
 // the browser ships the full iana list, so we do not hardcode zones
 function timezoneOptions() {
@@ -19,6 +21,10 @@ export class MemoryUI {
         this.apiUrl = CONFIG.memoryApiUrl
         this.currentSubTab = 'list'
         this.onMessage = null
+        this.onConversationChange = null
+        this.convoMessages = []
+        this.convoPage = 0
+        this.convoTotal = 0
         this.views = {
             list: document.getElementById('memory-view-list'),
             conversation: document.getElementById('memory-view-conversation'),
@@ -114,7 +120,9 @@ export class MemoryUI {
                 const del = document.createElement('button')
                 del.className = 'memory-delete'
                 del.textContent = '×'
-                del.addEventListener('click', () => this.deleteMemory(mem.id))
+                del.addEventListener('click', () =>
+                    this.deleteMemory(mem.id, item)
+                )
 
                 item.append(type, text, del)
                 list.appendChild(item)
@@ -127,43 +135,98 @@ export class MemoryUI {
     }
 
     async renderConversation() {
+        this.convoPage = 0
+        await this.loadConvoPage()
+    }
+
+    // fetches only the current page from the server
+    async loadConvoPage() {
         const container = this.views.conversation
         if (!container) return
         container.innerHTML = '<div class="empty-state">Loading...</div>'
         try {
+            const offset = this.convoPage * CONVO_PAGE_SIZE
             const data = await (
                 await fetch(
-                    `${this.apiUrl}/conversation/recent?limit=20&gap_minutes=30`
+                    `${this.apiUrl}/conversation/list?limit=${CONVO_PAGE_SIZE}&offset=${offset}`
                 )
             ).json()
-            const messages = data.messages || data.conversation || []
-            if (!messages.length) {
-                container.innerHTML =
-                    '<div class="empty-state">No conversation history.</div>'
-                return
-            }
-            const list = document.createElement('div')
-            list.className = 'memory-list'
-            for (const m of messages) {
-                if (m.user_message) {
-                    list.appendChild(this.buildConvoRow('user', m.user_message))
-                }
-                if (m.assistant_response) {
-                    list.appendChild(
-                        this.buildConvoRow('assistant', m.assistant_response)
-                    )
-                }
-            }
-            container.replaceChildren(list)
+            this.convoMessages = data.messages || []
+            this.convoTotal = data.total || 0
+            this.renderConvoPage()
         } catch (e) {
             container.innerHTML =
                 '<div class="empty-state">No conversation history.</div>'
         }
     }
 
+    // renders the already-fetched page from cache, no network
+    renderConvoPage() {
+        const container = this.views.conversation
+        if (!this.convoTotal) {
+            container.innerHTML =
+                '<div class="empty-state">No conversation history.</div>'
+            return
+        }
+        const list = document.createElement('div')
+        list.className = 'memory-list'
+        for (const m of this.convoMessages)
+            list.appendChild(this.buildConvoTurn(m))
+
+        container.replaceChildren(list)
+        const pageCount = Math.ceil(this.convoTotal / CONVO_PAGE_SIZE)
+        if (pageCount > 1) container.appendChild(this.buildPager(pageCount))
+    }
+
+    buildConvoTurn(m) {
+        const turn = document.createElement('div')
+        turn.className = 'convo-turn'
+        if (m.user_message)
+            turn.appendChild(this.buildConvoRow('user', m.user_message))
+        if (m.assistant_response)
+            turn.appendChild(
+                this.buildConvoRow('assistant', m.assistant_response)
+            )
+        if (m.id != null) {
+            const del = document.createElement('button')
+            del.className = 'memory-delete convo-delete'
+            del.textContent = '×'
+            del.addEventListener('click', () => this.deleteConversation(m.id))
+            turn.appendChild(del)
+        }
+        return turn
+    }
+
+    buildPager(pageCount) {
+        const pager = document.createElement('div')
+        pager.className = 'convo-pager'
+
+        const prev = document.createElement('button')
+        prev.textContent = '<'
+        prev.disabled = this.convoPage === 0
+        prev.addEventListener('click', () => {
+            this.convoPage--
+            this.loadConvoPage()
+        })
+
+        const label = document.createElement('span')
+        label.textContent = `Page ${this.convoPage + 1} of ${pageCount}`
+
+        const next = document.createElement('button')
+        next.textContent = '>'
+        next.disabled = this.convoPage >= pageCount - 1
+        next.addEventListener('click', () => {
+            this.convoPage++
+            this.loadConvoPage()
+        })
+
+        pager.append(prev, label, next)
+        return pager
+    }
+
     buildConvoRow(role, text) {
         const item = document.createElement('div')
-        item.className = 'memory-item'
+        item.className = `memory-item convo-${role}`
         const label = document.createElement('div')
         label.className = 'memory-type'
         label.textContent = role
@@ -247,16 +310,49 @@ export class MemoryUI {
         return input
     }
 
-    async deleteMemory(memoryId) {
-        if (!confirm('Delete this memory?')) return
+    // confirm then DELETE, returns true once the server removed it
+    async confirmDelete(message, path) {
+        if (!(await confirmModal(message, { confirmText: 'Delete', danger: true })))
+            return false
+        const res = await fetch(`${this.apiUrl}${path}`, { method: 'DELETE' })
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        return true
+    }
+
+    async deleteMemory(memoryId, itemEl) {
         try {
-            await fetch(`${this.apiUrl}/memory/${memoryId}`, {
-                method: 'DELETE',
-            })
-            this.renderMemoriesList()
+            if (!(await this.confirmDelete('Delete this memory?', `/memory/${memoryId}`)))
+                return
+            itemEl?.remove()
+            if (!this.views.list.querySelector('.memory-item')) {
+                this.views.list.innerHTML =
+                    '<div class="empty-state">No memories yet. Use "+ Add" to create one.</div>'
+            }
             this.updateStatsDisplay()
         } catch (e) {
-            this.onMessage?.('Failed to delete memory', 'error')
+            this.onMessage?.(`Failed to delete memory: ${e.message}`, 'error')
+        }
+    }
+
+    async deleteConversation(conversationId) {
+        try {
+            if (!(await this.confirmDelete('Delete this exchange?', `/conversation/${conversationId}`)))
+                return
+            this.convoMessages = this.convoMessages.filter(
+                (m) => m.id !== conversationId
+            )
+            this.convoTotal = Math.max(0, this.convoTotal - 1)
+            // page emptied by the delete, step back and refetch
+            if (!this.convoMessages.length && this.convoPage > 0) {
+                this.convoPage--
+                await this.loadConvoPage()
+            } else {
+                this.renderConvoPage()
+            }
+            this.updateStatsDisplay()
+            this.onConversationChange?.()
+        } catch (e) {
+            this.onMessage?.(`Failed to delete conversation: ${e.message}`, 'error')
         }
     }
 

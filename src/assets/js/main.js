@@ -554,6 +554,10 @@ document.addEventListener('DOMContentLoaded', () => {
     memory.setDefaults()
 
     memory.onMessage = (text, level) => logs.log(text, level)
+    memory.onConversationChange = () => {
+        chat.clear()
+        restoreConversation()
+    }
 
     connection.addEventListener('status-change', (e) => {
         status.updateConnection(e.detail.status, e.detail.isError)

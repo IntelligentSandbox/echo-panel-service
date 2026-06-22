@@ -1103,6 +1103,69 @@ code {
     color: var(--status-color-error);
 }
 
+.convo-turn {
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+    border-left: 2px solid var(--accent);
+    background-color: var(--bg-item-muted);
+}
+
+.convo-turn .memory-item {
+    background: transparent;
+    border-radius: 0;
+    padding-right: 24px;
+}
+
+.convo-turn .memory-item + .memory-item {
+    border-top: 1px solid var(--border-main);
+}
+
+.convo-user .memory-type {
+    color: white;
+    background: var(--accent);
+}
+
+.convo-assistant {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.convo-delete {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+}
+
+.convo-pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 10px;
+    color: var(--text-muted);
+    font-size: 0.6875rem;
+}
+
+.convo-pager button {
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--border-main);
+    border-radius: 4px;
+    background: var(--bg-item-muted);
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.convo-pager button:hover:not(:disabled) {
+    background: var(--border-main);
+}
+
+.convo-pager button:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
 /* user info form */
 .user-info-form {
     display: flex;
