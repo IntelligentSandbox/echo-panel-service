@@ -273,11 +273,9 @@ export class IntegrationsUI {
 export class LogUI {
     constructor() {
         this.container = document.getElementById('log-messages')
-        this.debug = false
     }
 
     log(message, level = 'info') {
-        if (level === 'debug' && !this.debug) return
         if (!this.container) return
 
         const entry = document.createElement('div')
@@ -313,11 +311,5 @@ export class LogUI {
 
     clear() {
         if (this.container) this.container.innerHTML = ''
-    }
-
-    toggleDebug() {
-        this.debug = !this.debug
-        this.log(`Debug logging ${this.debug ? 'on' : 'off'}`, 'event')
-        return this.debug
     }
 }

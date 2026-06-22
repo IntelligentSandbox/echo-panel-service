@@ -535,9 +535,7 @@ function wireSettings() {
 function wireLogControls() {
     const logButtons = document.querySelectorAll('.log-controls-bar button')
     if (logButtons[0])
-        logButtons[0].addEventListener('click', () => logs.toggleDebug())
-    if (logButtons[1])
-        logButtons[1].addEventListener('click', () => logs.clear())
+        logButtons[0].addEventListener('click', () => logs.clear())
 }
 
 document.addEventListener('DOMContentLoaded', () => {
