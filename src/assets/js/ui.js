@@ -16,6 +16,8 @@ const COLOR = {
     muted: 'var(--text-muted)',
 }
 
+const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s)
+
 export class PanelUI {
     constructor() {
         this.currentTab = 'chat'
@@ -50,8 +52,8 @@ export class StatusUI {
     }
 
     updateState(state) {
-        document.querySelector('#panel-state').textContent = state
-        document.querySelector('#avatar-state').textContent = state
+        document.querySelector('#panel-state').textContent = cap(state)
+        document.querySelector('#avatar-state').textContent = cap(state)
 
         const dot = document.querySelector('#status-dot')
         if (dot) {
@@ -65,7 +67,8 @@ export class StatusUI {
     }
 
     updateExpression(expression) {
-        document.getElementById('avatar-expression').textContent = expression
+        document.getElementById('avatar-expression').textContent =
+            cap(expression)
     }
 
     updateSpeech(isSpeaking) {
