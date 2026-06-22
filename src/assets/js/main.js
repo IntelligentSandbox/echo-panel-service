@@ -482,9 +482,9 @@ function wireControlButtons() {
 }
 
 function wireIntegrationControls() {
-    document
-        .getElementById('discord-vc-btn')
-        .addEventListener('click', toggleDiscordVoiceChannel)
+    const discordBtn = document.getElementById('discord-vc-btn')
+    if (discordBtn)
+        discordBtn.addEventListener('click', toggleDiscordVoiceChannel)
 
     const donate = document.querySelector('.donation-test-button')
     if (donate) donate.addEventListener('click', sendTestDonation)
