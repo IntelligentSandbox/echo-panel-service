@@ -16,7 +16,22 @@
     --status-color-info: #3b82f6;
     --microphone-active-color: rgba(88, 152, 255, 0.1);
     --microphone-speaking-color: rgba(64, 200, 120, 0.15);
+    --bg-body: #121212;
+    --accent: #5898ff;
 }
+
+[data-theme='midnight'] {
+    --primary: #c7ccd9;
+    --bg-tab-active: #12141c;
+    --border-main: #2e3344;
+    --text-muted: #8a90a3;
+    --bg-item-muted: #232735;
+    --bg-header: #161922;
+    --memory-stat-color: #c7ccd9;
+    --bg-body: #0f1117;
+    --accent: #7c83ff;
+}
+
 
 * {
     margin: 0;
@@ -24,8 +39,13 @@
     box-sizing: border-box;
 }
 
+html,
 body {
-    background-color: #121212;
+    height: 100%;
+}
+
+body {
+    background-color: var(--bg-body);
     font-family:
         Inter, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
         Sans-Serif;
@@ -34,8 +54,8 @@ body {
 #control-panel {
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    font-size: 12px;
+    height: 100%;
+    font-size: 0.75rem;
 }
 
 .panel-header {
@@ -92,6 +112,250 @@ body {
 .panel-state {
     color: var(--text-muted);
     font-weight: normal;
+}
+
+.header-button {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-button svg {
+    width: 18px;
+    height: 18px;
+    fill: var(--text-muted);
+    transition: fill 0.2s ease;
+}
+
+.header-button:hover {
+    background-color: var(--bg-item-muted);
+}
+
+.header-button:hover svg {
+    fill: var(--primary);
+}
+
+.header-button:active {
+    transform: scale(0.88);
+}
+
+.settings-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+}
+
+.settings-overlay.hidden {
+    display: none;
+}
+
+.settings-modal {
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-header);
+    padding: 14px;
+    overflow-y: auto;
+}
+
+.settings-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    font-size: 0.875rem;
+    font-weight: bold;
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--border-main);
+}
+
+.settings-group-label {
+    font-size: 0.625rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 12px;
+    margin-bottom: 4px;
+}
+
+.settings-group-label:first-of-type {
+    margin-top: 0;
+}
+
+.theme-swatches {
+    display: flex;
+    gap: 12px;
+}
+
+.theme-swatch {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.theme-swatch:hover {
+    transform: scale(1.1);
+}
+
+.theme-swatch.active {
+    box-shadow:
+        0 0 0 2px var(--bg-header),
+        0 0 0 4px var(--primary);
+}
+
+.theme-swatch[data-theme='dark'] {
+    background: linear-gradient(135deg, #272727 50%, #5898ff 50%);
+}
+
+.theme-swatch[data-theme='midnight'] {
+    background: linear-gradient(135deg, #161922 50%, #7c83ff 50%);
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transition: opacity 0.15s ease;
+}
+
+.modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-box {
+    width: 80%;
+    max-width: 280px;
+    background: var(--bg-header);
+    border: 1px solid var(--border-main);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.modal-message {
+    color: white;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    margin-bottom: 14px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.modal-actions button {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.6875rem;
+    color: white;
+    transition: all 0.2s;
+}
+
+.modal-cancel {
+    background: var(--bg-item-muted);
+}
+
+.modal-cancel:hover {
+    background: var(--border-main);
+}
+
+.modal-confirm {
+    background: var(--accent);
+}
+
+.modal-confirm:hover {
+    filter: brightness(1.1);
+}
+
+.modal-confirm.danger {
+    background: var(--status-color-error);
+}
+
+.settings-danger {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    border: 1px solid var(--status-color-error);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--status-color-error);
+    font-size: 0.6875rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.settings-danger:hover {
+    background: var(--status-color-error);
+    color: white;
+}
+
+.settings-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+.settings-row-title {
+    font-size: 0.8125rem;
+    color: white;
+    font-weight: 500;
+}
+
+.settings-row-desc {
+    font-size: 0.6875rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.segmented {
+    display: inline-flex;
+    flex-shrink: 0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.segmented button {
+    padding: 6px 12px;
+    border: none;
+    background: var(--bg-item-muted);
+    color: white;
+    font-size: 0.6875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.segmented button + button {
+    border-left: 1px solid var(--bg-header);
+}
+
+.segmented button:hover {
+    background: var(--border-main);
+}
+
+.segmented button.active {
+    background: var(--accent);
+    color: white;
 }
 
 .panel-tabs {
@@ -335,24 +599,8 @@ body {
 }
 
 .control-buttons button.active {
-    background: #5898ff;
+    background: var(--accent);
     color: white;
-}
-
-#content-mode-buttons {
-    gap: 0;
-}
-
-#content-mode-buttons button:active {
-    transform: none;
-}
-
-#content-mode-buttons button:first-child {
-    border-radius: 4px 0 0 4px;
-}
-
-#content-mode-buttons button:last-child {
-    border-radius: 0 4px 4px 0;
 }
 
 .discord-join-form {
@@ -591,24 +839,24 @@ code {
 
 .memory-add-form button {
     align-self: stretch;
-    background: var(--discord-color);
+    background: var(--accent);
     border: none;
     border-radius: 4px;
     color: white;
     cursor: pointer;
-    font-size: 11px;
+    font-size: 0.6875rem;
     padding: 6px 14px;
     transition: all 0.2s;
 }
 
 .memory-add-form button:hover {
-    background: var(--discord-color-hover);
+    filter: brightness(1.1);
 }
 
 .empty-state {
     text-align: center;
     padding: 20px;
-    font-size: 11px;
+    font-size: 0.6875rem;
     color: var(--text-muted);
 }
 
@@ -672,7 +920,7 @@ code {
 
 /* chat message variants */
 .chat-message.user {
-    background-color: var(--status-color-info);
+    background-color: var(--accent);
     color: white;
     margin-left: auto;
     width: fit-content;
@@ -893,18 +1141,18 @@ code {
 
 #save-user-info-btn {
     align-self: stretch;
-    background: var(--discord-color);
+    background: var(--accent);
     border: none;
     border-radius: 4px;
     color: white;
     cursor: pointer;
-    font-size: 11px;
+    font-size: 0.6875rem;
     padding: 6px 14px;
     transition: all 0.2s;
 }
 
 #save-user-info-btn:hover {
-    background: var(--discord-color-hover);
+    filter: brightness(1.1);
 }
 
 /* sound chips */

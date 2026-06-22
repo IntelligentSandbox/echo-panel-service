@@ -2,6 +2,8 @@ import { PanelUI, StatusUI, IntegrationsUI, ChatUI, LogUI } from './ui.js'
 import { MemoryUI } from './memory.js'
 import { Connect, ContinuousListener } from './connect.js'
 import { CONFIG } from './config.js'
+import { loadSettings, saveSettings, applySettings } from './settings.js'
+import { confirmModal } from './modal.js'
 
 const API = (path) => `${CONFIG.apiUrl}${path}`
 
@@ -260,6 +262,11 @@ function updateContentModeUI(mode) {
 }
 
 async function clearConversationAndHistory() {
+    const ok = await confirmModal(
+        'Erase all conversation and memory? This cannot be undone.',
+        { confirmText: 'Erase', danger: true }
+    )
+    if (!ok) return
     try {
         await fetch(API('/chat/clear'), { method: 'POST' })
         chat.clear()
@@ -472,10 +479,6 @@ function wireControlButtons() {
     document
         .getElementById('mode-unfiltered')
         .addEventListener('click', () => setProfanityFilterEnabled(false))
-
-    const actions = getControlGroupButtons('History')
-    if (actions[0])
-        actions[0].addEventListener('click', clearConversationAndHistory)
 }
 
 function wireIntegrationControls() {
@@ -491,6 +494,44 @@ function wireIntegrationControls() {
     if (sounds[1]) sounds[1].addEventListener('click', playSoundEffect)
 }
 
+function wireSettings() {
+    const overlay = document.getElementById('settings-overlay')
+    const settings = loadSettings()
+
+    document
+        .getElementById('settings-button')
+        .addEventListener('click', () => overlay.classList.remove('hidden'))
+    document
+        .getElementById('settings-close')
+        .addEventListener('click', () => overlay.classList.add('hidden'))
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.classList.add('hidden')
+    })
+
+    document
+        .getElementById('clear-history-btn')
+        .addEventListener('click', clearConversationAndHistory)
+
+    // segmented picker bound to a settings key, dataset attr carries the value
+    const wireSegment = (containerId, key, attr, parse = (v) => v) => {
+        const buttons = document.querySelectorAll(`#${containerId} button`)
+        buttons.forEach((btn) => {
+            const value = parse(btn.dataset[attr])
+            btn.classList.toggle('active', value === settings[key])
+            btn.addEventListener('click', () => {
+                settings[key] = value
+                saveSettings(settings)
+                applySettings(settings)
+                buttons.forEach((b) => b.classList.remove('active'))
+                btn.classList.add('active')
+            })
+        })
+    }
+
+    wireSegment('theme-buttons', 'theme', 'theme')
+    wireSegment('scale-buttons', 'scale', 'scale', Number)
+}
+
 function wireLogControls() {
     const logButtons = document.querySelectorAll('.log-controls-bar button')
     if (logButtons[0])
@@ -500,12 +541,15 @@ function wireLogControls() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    applySettings(loadSettings())
+
     wirePanelTabs()
     wireMemorySubTabs()
     wireChatControls()
     wireControlButtons()
     wireIntegrationControls()
     wireLogControls()
+    wireSettings()
 
     status.setDefaults()
     integrations.setDefaults()
